@@ -1,0 +1,36 @@
+= RoomMate: Einführung 
+
+== Ziele der Anwendung 
+
+Es herrscht Platzmangel an der Universität! Der Fachbereich Informatik wächst, aber leider wächst das Gebäude nicht mit. Gleichzeitig gibt es seit ... naja, Sie wissen schon ... immer mehr Mitarbeiter:innen, die im Homeoffice arbeiten. Wir könnten die Büros also im Prinzip auch gut mehrfach belegen und teilen. 
+
+Es soll also ein solches System mit dem Namen RoomMate geschrieben werden, bei dem sich Mitarbeiter:innen Ressourcen, wie zum Beispiel Büroplätze mit einer bestimmten Hardwareausstattung, für Zeiträume reservieren können. 
+
+== Nutzer:innen
+
+Neben regulären Benutzer:innen (in der Regel wissenschaftliche Angestellte) gibt es Personen, die die Plätze administrieren können.  Eine Person kann sowohl normale Nutzer:innen, als auch Administrator:innen sein. 
+
+=== Admins
+
+Für jeden Arbeitsplatz in RoomMate werden Informationen darüber gespeichert in welchem Raum sich der Platz befindet und welche Ausstattung vorhanden ist. 
+
+
+Administrator:innen können die Ausstattung eines Platzes ändern, Plätze für bestimmte Zeiten sperren und Reservierungen stornieren oder überschreiben.
+
+=== User 
+Reguläre Benutzer:innen bietet die Anwendung die Möglichkeit, einen passenden Platz zu finden und für einen Zeitraum, oder auch wiederkehrende Zeiträume zu reservieren. Die Suche nach einem Platz soll Filtermöglichkeiten für Ausstattung und Zeiträume haben. 
+
+Beispiel für Suchanfragen wären: 
+
+* Platz mit einem Monitor, der einen USB-C Anschluss hat am Donnerstag, den 16.11.2023 zwischen 09:00 und 17:30 Uhr
+* Platz mit einem HDMI Monitor für zwei Stunden jeden Dienstag
+* Irgendein Platz am 16.11.2023 zwischen 14:00 und 16:00 Uhr 
+
+== Fremdsysteme
+
+Unser RoomMate System soll mit einem Berechtigungssystem mit dem Namen KeyMaster interagieren. KeyMaster ist ein System, mit dem die elektronischen Schließungen der Universität gesteuert werden können. KeyMaster nimmt Anfragen per Webschnittstelle entgegen und kann Türen für bestimmte Zeiten für bestimmte Personen freigeben. 
+
+Sie bekommen von uns eine Implementierung von KeyMaster bereitgestellt. 
+
+NOTE: KeyMaster ist ausgedacht und wird in der Realität niemals das Licht der Welt erblicken. Es ist für uns aber eine gute Übung, um Systemintegration umzusetzen. 
+
