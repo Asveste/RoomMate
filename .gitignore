@@ -3,6 +3,9 @@
 
 # .gitignores added ourselves
 .idea
+.gradle
+build
+logs
 
 # User-specific stuff
 .idea/**/workspace.xml
