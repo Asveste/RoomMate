@@ -1,3 +1,3 @@
 # RoomMate
-Hier könnte Ihre Werbung stehen. :)
+Hier könnte Ihre Werbung stehen. :D
 .
