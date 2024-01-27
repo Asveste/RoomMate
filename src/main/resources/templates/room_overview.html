@@ -1,16 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" rel="stylesheet">
-    <title>RoomMate</title>
+    <title>RoomMate - Raumübersicht</title>
 </head>
 <body data-bs-theme="dark">
 <div class="container">
     <h1 class="text-body-emphasis py-4">Verfügbare Räume</h1>
-    <p class="my-2">Dummy Text</p>
+    <div class="mt-2">
+        <p>Diese Seite stellt nur eine Übersicht der Verfügbaren Räume dar.<br>
+            Für das buchen von Arbeitsplätzen musst du zur Seite <a href="/workspace_booking">Arbeitsplatz buchen</a>.
+        </p>
+    </div>
+    <div>
+        <ul class="list-group py-4">
+            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                th:each="room : ${rooms}">
+                <p class="mb-0">
+                    <span th:text="*{room.number}">Raumnummer</span>
+                </p>
+                <p class="mb-0">
+                    <span>Anzahl Arbeitsplätze: <span th:text="${#lists.size(room.workspace)}">0</span></span>
+                </p>
+            </li>
+        </ul>
+    </div>
     <a class="text-body-secondary py-8" href="index">Zurück zur Startseite</a>
 </div>
 </body>
