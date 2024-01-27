@@ -12,12 +12,13 @@
     <h1 class="text-body-emphasis py-4">Buchung eines Arbeitsplatzes</h1>
     <p>Unterhalb findest du eine Liste mit buchbaren Arbeitsplätzen.</p>
 
-    <form class="mb-4" method="get" th:action="@{/filter}">
-        <div class="mb-4">
+    <form class="pb-2" method="get" th:action="@{/filter}">
+        <div class="mb-2">
+            <!-- Trait Filter Accordion -->
             <div class="accordion" id="traitAccordion">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="traitHeader">
-                        <button aria-controls="traitCollapse" aria-expanded="true" class="accordion-button"
+                        <button aria-controls="traitCollapse" aria-expanded="false" class="accordion-button collapsed"
                                 data-bs-target="#traitCollapse" data-bs-toggle="collapse" type="button">
                             Filter
                         </button>
@@ -25,19 +26,22 @@
                     <div aria-labelledby="traitHeader" class="accordion-collapse collapse" data-bs-parent="#traitAccordion"
                          id="traitCollapse">
                         <div class="accordion-body">
-                            <!-- Accordion for dynamically generated Checkboxes -->
+                            <!-- Dynamically generated Checkboxes -->
                             <div class="form-check pb-2" th:each="trait : ${allTraits}">
-                                <input class="form-check-input" name="traitFilter"
-                                       th:id="${'traitFilter_' + #strings.replace(trait, ' ', '_')}" th:value="${trait}"
-                                       type="checkbox">
-                                <label class="form-check-label"
-                                       th:for="${'traitFilter_' + #strings.replace(trait, ' ', '_')}" th:text="${trait}"></label>
+                                <label>
+                                    <input class="form-check-input" name="traitFilter"
+                                           th:id="${'traitFilter_' + #strings.replace(trait, ' ', '_')}"
+                                           th:value="${trait}"
+                                           type="checkbox">
+                                    <span class="form-check-label" th:text="${trait}">Filter</span>
+                                </label>
                             </div>
                             <!-- Accordion for Date and Time Options -->
                             <div class="accordion" id="dateTimeAccordion">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="dateTimeHeader">
-                                        <button aria-controls="dateTimeCollapse" aria-expanded="true" class="accordion-button"
+                                        <button aria-controls="dateTimeCollapse" aria-expanded="false"
+                                                class="accordion-button collapsed"
                                                 data-bs-target="#dateTimeCollapse" data-bs-toggle="collapse"
                                                 type="button">
                                             Datum und Uhrzeit
@@ -46,15 +50,15 @@
                                     <div aria-labelledby="dateTimeHeader" class="accordion-collapse collapse"
                                          data-bs-parent="#dateTimeAccordion" id="dateTimeCollapse">
                                         <div class="accordion-body">
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <label class="form-label" for="timespan">Datum auswählen:</label>
                                                 <input class="form-control" id="timespan" name="timespan" type="date">
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <label class="form-label" for="startTime">Startzeit:</label>
                                                 <input class="form-control" id="startTime" name="startTime" type="time">
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-4">
                                                 <label class="form-label" for="endTime">Endzeit:</label>
                                                 <input class="form-control" id="endTime" name="endTime" type="time">
                                             </div>
@@ -76,6 +80,7 @@
         <button class="btn btn-primary" type="submit">Filtern</button>
     </form>
 
+    <!-- List of Rooms -->
     <ul class="list-group py-4" th:remove="all-but-first">
         <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
             th:each="room : ${rooms}">
@@ -88,13 +93,12 @@
             </p>
         </li>
     </ul>
-
-    <a class="text-body-secondary py-8" href="index">Zurück zur Startseite</a>
+    <a class="text-body-secondary" href="index">Zurück zur Startseite</a>
 </div>
 
+<!-- Bootstrap JavaScript -->
 <script crossorigin="anonymous"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>
