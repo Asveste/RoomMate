@@ -9,7 +9,12 @@
 </head>
 <body data-bs-theme="dark">
 <div class="container">
-    <h1 class="text-body-emphasis py-4">Verfügbare Räume</h1>
+    <h1 class="text-body-emphasis py-4">Raum <span th:text="*{room.number}"></span></h1>
+    <ul>
+        <li th:each="trait : ${room.number.traits}">
+            <span th:text="${trait}">Eigenschaft</span>
+        </li>
+    </ul>
     <a class="text-body-secondary py-8" href="index">Zurück zur Startseite</a>
 </div>
 </body>
