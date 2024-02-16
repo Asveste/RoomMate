@@ -20,39 +20,34 @@ public class RoomMateControllerTest {
     @DisplayName("Die Startseite ist unter /index erreichbar")
     void index() throws Exception {
         mvc.perform(get("/index"))
-                .andExpect(status().isOk())
-                .andReturn();
+                .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("Die Arbeitsplatz buchen Seite ist unter /workspace_booking erreichbar")
     void workspaceBooking() throws Exception {
-        MvcResult result = mvc.perform(get("/index"))
-                .andExpect(status().isOk())
-                .andReturn();
+        mvc.perform(get("/index"))
+                .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("Die Raumübersicht Seite ist unter /room_overview erreichbar")
     void roomOverview() throws Exception {
-        MvcResult result = mvc.perform(get("/room_overview"))
-                .andExpect(status().isOk())
-                .andReturn();
+        mvc.perform(get("/room_overview"))
+                .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("Die Buchungsübersicht Seite ist unter /user_bookings erreichbar")
     void userBookings() throws Exception {
-        MvcResult result = mvc.perform(get("/user_bookings"))
-                .andExpect(status().isOk())
-                .andReturn();
+        mvc.perform(get("/user_bookings"))
+                .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("Die Buchungsregeln Seite ist unter /rules_booking erreichbar")
     void rulesBooking() throws Exception {
-        MvcResult result = mvc.perform(get("/rules_booking"))
-                .andExpect(status().isOk())
-                .andReturn();
+        mvc.perform(get("/rules_booking"))
+                .andExpect(status().isOk());
     }
 }
