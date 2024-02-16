@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package RoomMate{
+
+package domain{
+
+package model{
+
+class Room{}
+Room : -UUID : id
+Room : -String : name
+
+class Trait{}
+Trait : -String : name
+
+class "[Record] Timespan"{}
+"[Record] Timespan" : -LocalDate : date
+"[Record] Timespan" : -LocalTime : startTime
+"[Record] Timespan" : -LocalTime : endTime
+
+class Workspace{}
+Workspace : -UUID : id
+Workspace : -Room : number
+Workspace : -List<Trait> : traits
+Workspace : -Set<Timespan> : existingReservations
+Workspace : --
+Workspace : +boolean : isOverlap()
+
+}
+
+}
+
+}
+
+@enduml
