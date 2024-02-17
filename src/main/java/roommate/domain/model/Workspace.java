@@ -33,4 +33,9 @@ public class Workspace {
         }
         return false;
     }
+
+    public boolean isValid(Timespan newReservation) {
+        return !newReservation.startTime().isAfter(newReservation.endTime())
+                && !newReservation.endTime().isBefore(newReservation.startTime());
+    }
 }
