@@ -16,7 +16,8 @@ public class Workspace {
         this.traits = traits;
     }
 
-    public Workspace(Integer id, Room number, List<Trait> traits, Set<Timespan> existingReservations) {
+    public Workspace(Integer id, Room number, List<Trait> traits,
+                     Set<Timespan> existingReservations) {
         this.id = id;
         this.number = number;
         this.traits = traits;
@@ -25,7 +26,8 @@ public class Workspace {
 
     public boolean isOverlap(Timespan newReservation) {
         for (Timespan existingReservation : existingReservations) {
-            if (newReservation.startTime().isBefore(existingReservation.endTime()) && newReservation.endTime().isAfter(existingReservation.startTime())) {
+            if (newReservation.startTime().isBefore(existingReservation.endTime())
+                    && newReservation.endTime().isAfter(existingReservation.startTime())) {
                 return true;
             }
         }
