@@ -7,15 +7,46 @@ package RoomMate{
 package adapter{
 
     package web{
-        class RoomMateController
+
+        class RoomMateController << @Controller >>{
+            - BookingService : bookingService
+        }
+
     }
+
     package db{
-            class WorkspaceRepositoryImpl{}
+
+        class WorkspaceRepositoryImpl{
+            - WorkspaceDao : db
+            + Integer : save(Workspace workspace)
+            + void : delete(Workspace workspace)
+            + void : deleteById(Integer id)
+            + Set<Workspace> : findByTraits(Collection<Trait> traits)
+            + Optional<Workspace> : findById(Integer id)
+        }
+        interface WorkspaceDao << extends CrudRepository[Workspace, Integer] >>{
+            + Integer : save(Workspace workspace)
+            + void : delete(Workspace workspace)
+            + void : deleteById(Integer id)
+            + Set<Workspace> : findByTraits(Collection<Trait> traits)
+            + Optional<Workspace> : findById(Integer id)
+        }
+
     }
+
     package api{
-        class RoomMateApi
+
+        class RoomMateApi << @RestController >>{}
+
     }
-    package security{}
+
+    package security{
+
+        class SecurityConfig{}
+        class AppUserService{}
+
+    }
+
 }
 
 package domain{
@@ -23,15 +54,22 @@ package domain{
     package service{
 
         interface WorkspaceRepository{
-            + Collection<Workspace> findByTraits(Collection<Trait> traists)
-            + Optional<Workspace> findById(Integer id)
+            + Integer : save(Workspace workspace)
+            + void : delete(Workspace workspace)
+            + void : deleteById(Integer id)
+            + Set<Workspace> : findByTraits(Collection<Trait> traits)
+            + Optional<Workspace> : findById(Integer id)
         }
         class BookingService{
+            - WorkspaceRepository : repo
             + <Workspace>List : allWorkspaces()
-            + <Workspace>List : allWorkspaces(Collection<Trait> traists)
+            + <Workspace>List : allWorkspacesByTraits(Collection<Trait> traits)
+            + Workspace : getWorkspace(Integer id)
+            + void : addTrait(Integer id, String trait)
+            + void : addTraits(Integer id, List<Trait> traits)
         }
         class NotExistentException{
-            This handles failed id Searches
+            This handles failed id searches
         }
         class UnvalidatedInput{
             This handles wrong input
@@ -42,33 +80,71 @@ package domain{
     package model{
 
         class Room{
-            - UUID : id
-            -String : name
+            - UUID : uuid
+            - Integer : id
+            - String : name
         }
         class Trait{
-            -String : name
+            - String : name
+            - Integer : id
         }
         class Timespan << Record >> {
             - LocalDate : date
             - LocalTime : startTime
             - LocalTime : endTime
+            - Integer : workspaceId
         }
         class Workspace{
-            - UUID : id
+            - UUID : uuid
+            - Integer : id
             - Room : number
             - List<Trait> : traits
             - Set<Timespan> : existingReservations
             + boolean : isOverlap(Timespan timespan)
+        }
+        class RoomDto << Record >> {
+            - UUID: uuid
+            - @Id Integer : id
+            - String : name
+        }
+        class TraitDto << Record >> {
+            - String : name
+            - @Id Integer : id
+        }
+        class TimespanDto << Record >> {
+            - LocalDate : date
+            - LocalTime : startTime
+            - LocalTime : endTime
+            - Integer : workspaceId
+        }
+        class WorkspaceDto << Record >> {
+            - UUID : uuid
+            - @Id Integer : id
+            - Integer : roomId
+            - List<Trait> : traitId
+            - Set<Timespan> : existingReservations
         }
 
     }
 
 }
 
-WorkspaceRepositoryImpl --> WorkspaceRepository
-RoomMateController --> Workspace
-RoomMateApi --> Workspace
+'Adapter - api
+RoomMateApi --> BookingService
 
+'Adapter - web
+RoomMateController --> BookingService
+
+'Adapter - db
+WorkspaceRepositoryImpl ..> WorkspaceRepository
+WorkspaceRepositoryImpl --> WorkspaceDao
+
+'Domain - Application Service
+BookingService --> WorkspaceRepository
+BookingService --> NotExistentException
+BookingService --> UnvalidatedInput
+
+'Domain - Model
 Workspace --> Room
 Workspace --> Trait
 Workspace --> Timespan
