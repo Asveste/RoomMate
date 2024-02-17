@@ -12,7 +12,9 @@ package adapter{
     package db{
             class WorkspaceRepositoryImpl{}
     }
-    package api{}
+    package api{
+        class RoomMateApi
+    }
     package security{}
 }
 
@@ -63,10 +65,13 @@ package domain{
 
 }
 
-
-WorkspaceRepository --> IWorkspaceRepository
+WorkspaceRepositoryImpl --> WorkspaceRepository
 RoomMateController --> Workspace
+RoomMateApi --> Workspace
 
+Workspace --> Room
+Workspace --> Trait
+Workspace --> Timespan
 
 }
 
