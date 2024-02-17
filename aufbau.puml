@@ -3,30 +3,39 @@
 
 package RoomMate{
 
-package WebUI{
-    class RoomMateController
+
+package adapter{
+
+    package web{
+        class RoomMateController
+    }
+    package db{
+            class WorkspaceRepositoryImpl{}
+    }
+    package api{}
+    package security{}
 }
 
 package domain{
 
-package service{
+    package service{
 
-    interface IWorkspaceRepository{
-        + Collection<Workspace> findByTraits(Collection<Trait> traists)
-        + Optional<Workspace> findById(Integer id)
-    }
-    class BookingService{
-        + <Workspace>List : allWorkspaces()
-        + <Workspace>List : allWorkspaces(Collection<Trait> traists)
-    }
-    class NotExistentException{
-        This handles failed id Searches
-    }
-    class UnvalidatedInput{
-        This handles wrong input
-    }
+        interface WorkspaceRepository{
+            + Collection<Workspace> findByTraits(Collection<Trait> traists)
+            + Optional<Workspace> findById(Integer id)
+        }
+        class BookingService{
+            + <Workspace>List : allWorkspaces()
+            + <Workspace>List : allWorkspaces(Collection<Trait> traists)
+        }
+        class NotExistentException{
+            This handles failed id Searches
+        }
+        class UnvalidatedInput{
+            This handles wrong input
+        }
 
-}
+    }
 
     package model{
 
@@ -34,39 +43,31 @@ package service{
             - UUID : id
             -String : name
         }
-
         class Trait{
             -String : name
         }
-
         class Timespan << Record >> {
             - LocalDate : date
             - LocalTime : startTime
             - LocalTime : endTime
         }
-
-
         class Workspace{
             - UUID : id
             - Room : number
             - List<Trait> : traits
             - Set<Timespan> : existingReservations
-            + boolean : isOverlap()
+            + boolean : isOverlap(Timespan timespan)
         }
-
 
     }
 
 }
 
-package DB{
-
-        class WorkspaceRepository{}
-
-}
 
 WorkspaceRepository --> IWorkspaceRepository
-}
+RoomMateController --> Workspace
 
+
+}
 
 @enduml
