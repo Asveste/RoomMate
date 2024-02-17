@@ -3,34 +3,70 @@
 
 package RoomMate{
 
+package WebUI{
+    class RoomMateController
+}
+
 package domain{
 
-package model{
+package service{
 
-class Room{}
-Room : -UUID : id
-Room : -String : name
-
-class Trait{}
-Trait : -String : name
-
-class "[Record] Timespan"{}
-"[Record] Timespan" : -LocalDate : date
-"[Record] Timespan" : -LocalTime : startTime
-"[Record] Timespan" : -LocalTime : endTime
-
-class Workspace{}
-Workspace : -UUID : id
-Workspace : -Room : number
-Workspace : -List<Trait> : traits
-Workspace : -Set<Timespan> : existingReservations
-Workspace : --
-Workspace : +boolean : isOverlap()
+    interface IWorkspaceRepository{
+        + Collection<Workspace> findByTraits(Collection<Trait> traists)
+        + Optional<Workspace> findById(Integer id)
+    }
+    class BookingService{
+        + <Workspace>List : allWorkspaces()
+        + <Workspace>List : allWorkspaces(Collection<Trait> traists)
+    }
+    class NotExistentException{
+        This handles failed id Searches
+    }
+    class UnvalidatedInput{
+        This handles wrong input
+    }
 
 }
 
-}
+    package model{
+
+        class Room{
+            - UUID : id
+            -String : name
+        }
+
+        class Trait{
+            -String : name
+        }
+
+        class Timespan << Record >> {
+            - LocalDate : date
+            - LocalTime : startTime
+            - LocalTime : endTime
+        }
+
+
+        class Workspace{
+            - UUID : id
+            - Room : number
+            - List<Trait> : traits
+            - Set<Timespan> : existingReservations
+            + boolean : isOverlap()
+        }
+
+
+    }
 
 }
+
+package DB{
+
+        class WorkspaceRepository{}
+
+}
+
+WorkspaceRepository --> IWorkspaceRepository
+}
+
 
 @enduml
