@@ -31,6 +31,28 @@ package adapter{
             + Set<Workspace> : findByTraits(Collection<Trait> traits)
             + Optional<Workspace> : findById(Integer id)
         }
+        class RoomDto << Record >> {
+            - UUID: uuid
+            - @Id Integer : id
+            - String : name
+        }
+        class TraitDto << Record >> {
+            - String : name
+            - @Id Integer : id
+        }
+        class TimespanDto << Record >> {
+            - LocalDate : date
+            - LocalTime : startTime
+            - LocalTime : endTime
+            - Integer : workspaceId
+        }
+        class WorkspaceDto << Record >> {
+            - UUID : uuid
+            - @Id Integer : id
+            - Integer : roomId
+            - List<Trait> : traitId
+            - Set<Timespan> : existingReservations
+        }
 
     }
 
@@ -101,28 +123,10 @@ package domain{
             - List<Trait> : traits
             - Set<Timespan> : existingReservations
             + boolean : isOverlap(Timespan timespan)
-        }
-        class RoomDto << Record >> {
-            - UUID: uuid
-            - @Id Integer : id
-            - String : name
-        }
-        class TraitDto << Record >> {
-            - String : name
-            - @Id Integer : id
-        }
-        class TimespanDto << Record >> {
-            - LocalDate : date
-            - LocalTime : startTime
-            - LocalTime : endTime
-            - Integer : workspaceId
-        }
-        class WorkspaceDto << Record >> {
-            - UUID : uuid
-            - @Id Integer : id
-            - Integer : roomId
-            - List<Trait> : traitId
-            - Set<Timespan> : existingReservations
+            + void : roomDtoTransfer(RoomDto dto)
+            + void : traitDtoTransfer(TraitDto dto)
+            + void : timespanDtoTransfer(TimespanDto dto)
+            + void : workspaceDtoTransfer(WorkspaceDto dto)
         }
 
     }
@@ -138,6 +142,11 @@ RoomMateController --> BookingService
 'Adapter - db
 WorkspaceRepositoryImpl ..> WorkspaceRepository
 WorkspaceRepositoryImpl --> WorkspaceDao
+
+RoomDto --> WorkspaceRepositoryImpl
+TraitDto --> WorkspaceRepositoryImpl
+TimespanDto --> WorkspaceRepositoryImpl
+WorkspaceDto --> WorkspaceRepositoryImpl
 
 'Domain - Application Service
 BookingService --> WorkspaceRepository
