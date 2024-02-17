@@ -1,7 +1,10 @@
 package roommate.adapter.web;
 
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import roommate.domain.model.Timespan;
 
 @Controller
 public class RoomMateController {
@@ -12,7 +15,10 @@ public class RoomMateController {
     }
 
     @GetMapping("/workspace_booking")
-    public String workspaceBooking() {
+    public String workspaceBooking(@Valid Timespan timespan, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "workspace_booking";
+        }
         return "workspace_booking";
     }
 
