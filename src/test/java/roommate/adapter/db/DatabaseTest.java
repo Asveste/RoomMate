@@ -32,7 +32,7 @@ public class DatabaseTest {
         @Test
         @DisplayName("Wenn es mehrere Workspaces gibt, werden alle gefunden")
         void test_2() {
-            //Arrange
+            // Arrange
             // Act
             // Assert
         }

@@ -1,7 +1,9 @@
 package roommate.adapter.db;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 import roommate.applicationservice.WorkspaceRepository;
 import roommate.domain.model.Room;
@@ -59,11 +61,12 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     @Override
     public Optional<Workspace> findById(Integer id) {
-        return Optional.empty();
+        return db.findById(id).map(this::convertWorkspace);
     }
 
     @Override
     public Set<Workspace> findAll() {
-        return null;
+        Collection<roommate.adapter.db.Workspace> workspace = db.findAll();
+        return workspace.stream().map(this::convertWorkspace).collect(Collectors.toSet());
     }
 }
