@@ -1,18 +1,20 @@
 package roommate.domain.model;
 
 public class Trait {
-    private String trait;
+    private final Integer id;
+    private final String trait;
 
-    public Trait(String trait) {
+    public Trait(Integer id, String trait) {
+        this.id = id;
         this.trait = trait;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public String getTrait() {
         return trait;
-    }
-
-    public void setTrait(String traits) {
-        this.trait = traits;
     }
 
     @Override
