@@ -1,16 +1,16 @@
-package roommate.domain.applicationservice;
+package roommate.applicationservice;
 
 import roommate.domain.model.Workspace;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface WorkspaceRepository {
-    Integer save(Workspace workspace);
+    Workspace save(Workspace workspace);
 
     void deleteById(Integer id);
 
     Optional<Workspace> findById(Integer id);
 
-    List<Workspace> findAll();
+    Set<Workspace> findAll();
 }
