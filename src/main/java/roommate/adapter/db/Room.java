@@ -4,5 +4,5 @@ import org.springframework.data.annotation.Id;
 
 import java.util.UUID;
 
-public record RoomDto(UUID uuid, @Id Integer id, String name) {
+public record Room(UUID uuid, @Id Integer id, String name) {
 }
