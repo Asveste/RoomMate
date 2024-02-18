@@ -47,7 +47,6 @@ package adapter{
             - Integer : workspaceId
         }
         class WorkspaceDto << Record >> {
-            - UUID : uuid
             - @Id Integer : id
             - Integer : roomId
             - List<Trait> : traitId
@@ -117,7 +116,6 @@ package domain{
             - Integer : workspaceId
         }
         class Workspace{
-            - UUID : uuid
             - Integer : id
             - Room : number
             - List<Trait> : traits
