@@ -19,17 +19,15 @@ package adapter{
         class WorkspaceRepositoryImpl{
             - WorkspaceDao : db
             + Integer : save(Workspace workspace)
-            + void : delete(Workspace workspace)
             + void : deleteById(Integer id)
-            + Set<Workspace> : findByTraits(Collection<Trait> traits)
             + Optional<Workspace> : findById(Integer id)
+            + List<Workspace> : findAll()
         }
         interface WorkspaceDao << extends CrudRepository[Workspace, Integer] >>{
-            + Integer : save(Workspace workspace)
-            + void : delete(Workspace workspace)
+            + Integer : save(WorkspaceDto workspaceDto)
             + void : deleteById(Integer id)
-            + Set<Workspace> : findByTraits(Collection<Trait> traits)
-            + Optional<Workspace> : findById(Integer id)
+            + Optional<WorkspaceDto> : findById(Integer id)
+            + List<WorkspaceDto> : findAll()
         }
         class RoomDto << Record >> {
             - UUID: uuid
@@ -37,8 +35,8 @@ package adapter{
             - String : name
         }
         class TraitDto << Record >> {
-            - String : name
             - @Id Integer : id
+            - String : name
         }
         class TimespanDto << Record >> {
             - LocalDate : date
@@ -76,10 +74,9 @@ package domain{
 
         interface WorkspaceRepository{
             + Integer : save(Workspace workspace)
-            + void : delete(Workspace workspace)
             + void : deleteById(Integer id)
-            + Set<Workspace> : findByTraits(Collection<Trait> traits)
             + Optional<Workspace> : findById(Integer id)
+            + List<Workspace> : findAll()
         }
         class BookingService{
             - WorkspaceRepository : repo
@@ -106,8 +103,8 @@ package domain{
             - String : name
         }
         class Trait{
-            - String : name
             - Integer : id
+            - String : name
         }
         class Timespan << Record >> {
             - LocalDate : date
@@ -141,6 +138,9 @@ RoomMateController --> BookingService
 'Adapter - db
 WorkspaceRepositoryImpl ..> WorkspaceRepository
 WorkspaceRepositoryImpl --> WorkspaceDao
+
+WorkspaceDto --> TraitDto
+WorkspaceDto --> TimespanDto
 
 RoomDto --> WorkspaceRepositoryImpl
 TraitDto --> WorkspaceRepositoryImpl
