@@ -6,20 +6,20 @@ import java.util.Set;
 public class Workspace {
 
     private final Integer id;
-    private final Room number;
+    private final Room room;
     private final Set<Trait> traits;
     private final Set<Timespan> existingReservations;
 
     public Workspace(Integer id, Room number) {
         this.id = id;
-        this.number = number;
+        this.room = number;
         this.traits = new HashSet<>();
         this.existingReservations = new HashSet<>();
     }
 
     public Workspace(Integer id, Room number, Set<Trait> traits) {
         this.id = id;
-        this.number = number;
+        this.room = number;
         this.traits = traits;
         this.existingReservations = new HashSet<>();
     }
@@ -27,7 +27,7 @@ public class Workspace {
     public Workspace(Integer id, Room number, Set<Trait> traits,
                      Set<Timespan> existingReservations) {
         this.id = id;
-        this.number = number;
+        this.room = number;
         this.traits = traits;
         this.existingReservations = existingReservations;
     }
@@ -36,8 +36,8 @@ public class Workspace {
         return id;
     }
 
-    public Room getNumber() {
-        return number;
+    public Room getRoom() {
+        return room;
     }
 
     public Set<Trait> getTraits() {
@@ -49,7 +49,7 @@ public class Workspace {
     }
 
     public Integer getRoomId() {
-        return this.number.getId();
+        return this.room.getId();
     }
 
 
@@ -57,7 +57,7 @@ public class Workspace {
     public String toString() {
         return "Workspace{" +
                 "id=" + id +
-                ", number=" + number +
+                ", room=" + room +
                 ", traits=" + traits +
                 ", existingReservations=" + existingReservations +
                 '}';
