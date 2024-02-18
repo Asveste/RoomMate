@@ -2,15 +2,15 @@ package roommate.adapter.db;
 
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-public interface WorkspaceDao extends CrudRepository<WorkspaceDto, Integer> {
-    Integer save(WorkspaceDto workspaceDto);
+public interface WorkspaceDao extends CrudRepository<Workspace, Integer> {
+    Workspace save(Workspace workspace);
 
     void deleteById(Integer id);
 
-    Optional<WorkspaceDto> findById(Integer id);
+    Optional<Workspace> findById(Integer id);
 
-    List<WorkspaceDto> findAll();
+    Set<Workspace> findAll();
 }

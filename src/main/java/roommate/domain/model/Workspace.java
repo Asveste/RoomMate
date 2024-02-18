@@ -1,32 +1,30 @@
 package roommate.domain.model;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class Workspace {
 
     private final Integer id;
     private final Room number;
-    private final List<Trait> traits;
+    private final Set<Trait> traits;
     private final Set<Timespan> existingReservations;
 
     public Workspace(Integer id, Room number) {
         this.id = id;
         this.number = number;
-        this.traits = new ArrayList<>();
+        this.traits = new HashSet<>();
         this.existingReservations = new HashSet<>();
     }
 
-    public Workspace(Integer id, Room number, List<Trait> traits) {
+    public Workspace(Integer id, Room number, Set<Trait> traits) {
         this.id = id;
         this.number = number;
         this.traits = traits;
         this.existingReservations = new HashSet<>();
     }
 
-    public Workspace(Integer id, Room number, List<Trait> traits,
+    public Workspace(Integer id, Room number, Set<Trait> traits,
                      Set<Timespan> existingReservations) {
         this.id = id;
         this.number = number;
@@ -42,7 +40,7 @@ public class Workspace {
         return number;
     }
 
-    public List<Trait> getTraits() {
+    public Set<Trait> getTraits() {
         return traits;
     }
 
@@ -62,7 +60,8 @@ public class Workspace {
 
     public boolean isOverlap(Timespan newReservation) {
         for (Timespan existingReservation : existingReservations) {
-            if (newReservation.startTime().isBefore(existingReservation.endTime())
+            if (newReservation.date().equals(existingReservation.date())
+                    && newReservation.startTime().isBefore(existingReservation.endTime())
                     && newReservation.endTime().isAfter(existingReservation.startTime())) {
                 return true;
             }

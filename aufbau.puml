@@ -21,13 +21,13 @@ package adapter{
             + Integer : save(Workspace workspace)
             + void : deleteById(Integer id)
             + Optional<Workspace> : findById(Integer id)
-            + List<Workspace> : findAll()
+            + Set<Workspace> : findAll()
         }
         interface WorkspaceDao << extends CrudRepository[Workspace, Integer] >>{
-            + Integer : save(WorkspaceDto workspaceDto)
+            + WorkspaceDto : save(WorkspaceDto workspaceDto)
             + void : deleteById(Integer id)
             + Optional<WorkspaceDto> : findById(Integer id)
-            + List<WorkspaceDto> : findAll()
+            + Set<WorkspaceDto> : findAll()
         }
         class RoomDto << Record >> {
             - UUID: uuid
@@ -47,7 +47,7 @@ package adapter{
         class WorkspaceDto << Record >> {
             - @Id Integer : id
             - Integer : roomId
-            - List<Trait> : traitId
+            - Set<Trait> : traitId
             - Set<Timespan> : existingReservations
         }
 
@@ -85,6 +85,7 @@ package domain{
             + Workspace : getWorkspace(Integer id)
             + void : addTrait(Integer id, String trait)
             + void : addTraits(Integer id, List<Trait> traits)
+            + Set<Workspace> : findByTraits(List<Trait> traits)
         }
         class NotExistentException{
             This handles failed id searches

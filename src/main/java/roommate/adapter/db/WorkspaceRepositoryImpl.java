@@ -1,11 +1,11 @@
 package roommate.adapter.db;
 
 import org.springframework.stereotype.Repository;
-import roommate.domain.applicationservice.WorkspaceRepository;
+import roommate.applicationservice.WorkspaceRepository;
 import roommate.domain.model.Workspace;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class WorkspaceRepositoryImpl implements WorkspaceRepository {
@@ -16,13 +16,13 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     @Override
-    public Integer save(Workspace workspace) {
+    public Workspace save(Workspace workspace) {
         return null;
     }
 
     @Override
     public void deleteById(Integer id) {
-
+        db.deleteById(id);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     @Override
-    public List<Workspace> findAll() {
+    public Set<Workspace> findAll() {
         return null;
     }
 }
