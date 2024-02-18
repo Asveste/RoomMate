@@ -12,6 +12,7 @@ import roommate.adapter.security.WithMockOAuth2User;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -75,5 +76,12 @@ public class RoomMateControllerTest {
     void workspaceEditor2() throws Exception {
         mvc.perform(get("/workspace_editor").with(csrf()))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Testen ob Authentifizierung möglich ist")
+    void test() throws Exception {
+        mvc.perform(get("/"))
+                .andExpect(redirectedUrl("http://localhost/oauth2/authorization/github"));
     }
 }
