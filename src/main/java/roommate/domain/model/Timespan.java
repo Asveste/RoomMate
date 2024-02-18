@@ -7,4 +7,3 @@ import java.time.LocalTime;
 public record Timespan(@FutureOrPresent LocalDate date, LocalTime startTime, LocalTime endTime,
                        Integer workspaceId) {
 }
-// For fixing the spacing
