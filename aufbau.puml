@@ -123,6 +123,7 @@ package domain{
             - List<Trait> : traits
             - Set<Timespan> : existingReservations
             + boolean : isOverlap(Timespan timespan)
+            + boolean : isValid(Timespan timespan)
             + void : roomDtoTransfer(RoomDto dto)
             + void : traitDtoTransfer(TraitDto dto)
             + void : timespanDtoTransfer(TimespanDto dto)

@@ -24,6 +24,22 @@ public class Workspace {
         this.existingReservations = existingReservations;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public Room getNumber() {
+        return number;
+    }
+
+    public List<Trait> getTraits() {
+        return traits;
+    }
+
+    public Set<Timespan> getExistingReservations() {
+        return existingReservations;
+    }
+
     public boolean isOverlap(Timespan newReservation) {
         for (Timespan existingReservation : existingReservations) {
             if (newReservation.startTime().isBefore(existingReservation.endTime())
@@ -35,7 +51,9 @@ public class Workspace {
     }
 
     public boolean isValid(Timespan newReservation) {
-        return !newReservation.startTime().isAfter(newReservation.endTime())
-                && !newReservation.endTime().isBefore(newReservation.startTime());
+        if (newReservation.startTime().isAfter(newReservation.endTime())) {
+            return false;
+        }
+        return !newReservation.startTime().equals(newReservation.endTime());
     }
 }
