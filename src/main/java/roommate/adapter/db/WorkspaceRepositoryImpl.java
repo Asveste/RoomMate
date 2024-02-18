@@ -15,6 +15,9 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         this.db = db;
     }
 
+    private Workspace convertWorkspace(WorkspaceDao workspaceDao) {
+        return null;
+    }
     @Override
     public Workspace save(Workspace workspace) {
         return null;
