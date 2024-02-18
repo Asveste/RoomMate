@@ -30,9 +30,9 @@ class WorkspaceTest {
     @DisplayName("Wenn bei Timespan die endTime == startTime ist, wird false zurückgegeben")
     void isValid2() {
         Room room = mock(Room.class);
-        Workspace workspace = new Workspace(0, room, List.of(), Set.of(new Timespan(LocalDate.now(), LocalTime.of(14, 0), LocalTime.of(14, 0), 0)));
+        Workspace workspace = new Workspace(1, room, List.of(), Set.of(new Timespan(LocalDate.now(), LocalTime.of(14, 0), LocalTime.of(14, 0), 1)));
         Set<Timespan> existingReservations = workspace.getExistingReservations();
-        Timespan timespan = existingReservations.stream().findFirst().orElse(new Timespan(LocalDate.now(), LocalTime.of(14, 0), LocalTime.of(14, 0), 0));
+        Timespan timespan = existingReservations.stream().findFirst().orElse(new Timespan(LocalDate.now(), LocalTime.of(14, 0), LocalTime.of(14, 0), 1));
 
         boolean valid = workspace.isValid(timespan);
 
@@ -43,9 +43,9 @@ class WorkspaceTest {
     @DisplayName("Wenn sich zwei Zeiten überlappen wird true zurückgegeben")
     void isOverlap() {
         Room room = mock(Room.class);
-        Workspace workspace = new Workspace(1, room, List.of(), Set.of(new Timespan(LocalDate.now().plusDays(1), LocalTime.of(14, 0), LocalTime.of(16, 0), 1)));
+        Workspace workspace = new Workspace(2, room, List.of(), Set.of(new Timespan(LocalDate.now().plusDays(1), LocalTime.of(14, 0), LocalTime.of(16, 0), 2)));
 
-        boolean overlap = workspace.isOverlap(new Timespan(LocalDate.now().plusDays(1), LocalTime.of(15, 0), LocalTime.of(17, 0), 1));
+        boolean overlap = workspace.isOverlap(new Timespan(LocalDate.now().plusDays(1), LocalTime.of(15, 0), LocalTime.of(17, 0), 2));
 
         assertTrue(overlap);
     }
@@ -54,9 +54,9 @@ class WorkspaceTest {
     @DisplayName("Wenn sich zwei Zeiten nicht überlappen wird false zurückgegeben")
     void isOverlap2() {
         Room room = mock(Room.class);
-        Workspace workspace = new Workspace(2, room, List.of(), Set.of(new Timespan(LocalDate.now().plusDays(1), LocalTime.of(14, 0), LocalTime.of(15, 0), 2)));
+        Workspace workspace = new Workspace(3, room, List.of(), Set.of(new Timespan(LocalDate.now().plusDays(1), LocalTime.of(14, 0), LocalTime.of(15, 0), 3)));
 
-        boolean overlap = workspace.isOverlap(new Timespan(LocalDate.now().plusDays(1), LocalTime.of(15, 0), LocalTime.of(17, 0), 1));
+        boolean overlap = workspace.isOverlap(new Timespan(LocalDate.now().plusDays(1), LocalTime.of(15, 0), LocalTime.of(17, 0), 3));
 
         assertFalse(overlap);
     }
