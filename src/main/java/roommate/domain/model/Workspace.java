@@ -75,4 +75,12 @@ public class Workspace {
         }
         return !newReservation.startTime().equals(newReservation.endTime());
     }
+
+    public void addTrait(Trait trait) {
+        this.traits.add(trait);
+    }
+
+    public void addReservation(Timespan timespan) {
+        this.existingReservations.add(timespan);
+    }
 }
