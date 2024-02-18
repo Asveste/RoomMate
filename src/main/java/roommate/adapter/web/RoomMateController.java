@@ -1,7 +1,10 @@
 package roommate.adapter.web;
 
 import jakarta.validation.Valid;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import roommate.domain.model.Timespan;
@@ -35,5 +38,13 @@ public class RoomMateController {
     @GetMapping("/rules_booking")
     public String rulesBooking() {
         return "rules_booking";
+    }
+
+    @GetMapping("/workspace_editor")
+    @Secured("ROLE_ADMIN")
+    public String workspaceEditor(OAuth2AuthenticationToken auth, Model model) {
+        String login = auth.getPrincipal().getAttribute("login");
+        model.addAttribute("name", login);
+        return "workspace_editor";
     }
 }

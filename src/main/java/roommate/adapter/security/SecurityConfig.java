@@ -12,9 +12,11 @@ public class SecurityConfig {
     public SecurityFilterChain config(HttpSecurity chainBuilder) throws Exception {
         chainBuilder.authorizeHttpRequests(
                 configurer -> configurer.requestMatchers("/css/*").permitAll()
-                        .anyRequest().authenticated()
-        );
-
+                        .anyRequest()
+                        .authenticated())
+                .oauth2Login(config -> config.userInfoEndpoint(
+                        info -> info.userService(new AppUserService())
+                ));
         return chainBuilder.build();
     }
 
