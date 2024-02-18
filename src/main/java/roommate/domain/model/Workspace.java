@@ -48,6 +48,11 @@ public class Workspace {
         return existingReservations;
     }
 
+    public Integer getRoomId() {
+        return this.number.getId();
+    }
+
+
     @Override
     public String toString() {
         return "Workspace{" +

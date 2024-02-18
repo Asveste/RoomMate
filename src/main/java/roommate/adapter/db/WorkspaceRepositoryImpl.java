@@ -1,15 +1,17 @@
 package roommate.adapter.db;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 import roommate.applicationservice.WorkspaceRepository;
 import roommate.domain.model.Room;
 import roommate.domain.model.Timespan;
 import roommate.domain.model.Trait;
 import roommate.domain.model.Workspace;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 
 @Repository
 public class WorkspaceRepositoryImpl implements WorkspaceRepository {
@@ -51,7 +53,28 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     @Override
     public Workspace save(Workspace workspace) {
-        return null;
+        Integer id = db.findById(workspace.getId())
+                .map(roommate.adapter.db.Workspace::id)
+                .orElse(null);
+        Set<roommate.adapter.db.Trait> traits = workspace.getTraits().stream()
+                .map(this::extractTrait)
+                .collect(Collectors.toSet());
+        Set<roommate.adapter.db.Timespan> times = workspace.getExistingReservations().stream()
+                .map(this::extractTime)
+                .collect(Collectors.toSet());
+        roommate.adapter.db.Workspace obj =
+                new roommate.adapter.db.Workspace(id, workspace.getRoomId(), traits, times);
+        roommate.adapter.db.Workspace save = db.save(obj);
+        return convertWorkspace(save);
+    }
+
+    private roommate.adapter.db.Trait extractTrait(Trait trait) {
+        return new roommate.adapter.db.Trait(trait.getId(), trait.getTrait());
+    }
+
+    private roommate.adapter.db.Timespan extractTime(Timespan timespan) {
+        return new roommate.adapter.db.Timespan(timespan.date(), timespan.startTime(),
+                timespan.endTime(), timespan.workspaceId());
     }
 
     @Override
