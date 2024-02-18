@@ -2,6 +2,9 @@ package roommate.adapter.db;
 
 import org.springframework.stereotype.Repository;
 import roommate.applicationservice.WorkspaceRepository;
+import roommate.domain.model.Room;
+import roommate.domain.model.Timespan;
+import roommate.domain.model.Trait;
 import roommate.domain.model.Workspace;
 
 import java.util.Optional;
@@ -15,8 +18,16 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         this.db = db;
     }
 
-    private Workspace convertWorkspace(roommate.adapter.db.Workspace workspace) {
-        return null;
+    private Trait convertTrait(roommate.adapter.db.Trait trait) {
+        return new Trait(trait.id(), trait.name());
+    }
+
+    private Timespan convertTimespan(roommate.adapter.db.Timespan timespan) {
+        return new Timespan(timespan.date(), timespan.startTime(), timespan.endTime(), timespan.workspaceId());
+    }
+
+    private Room convertRoom(roommate.adapter.db.Room room) {
+        return new Room(room.uuid(), room.id(), room.name());
     }
 
     @Override
