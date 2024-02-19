@@ -8,10 +8,17 @@ import java.util.UUID;
 
 public class Workspace implements Comparable<Workspace> {
 
-    private final List<Trait> traits = new ArrayList<>();
-    private final List<Timespan> existingReservations = new ArrayList<>();
+    private List<Trait> traits = new ArrayList<>();
+    private List<Timespan> existingReservations = new ArrayList<>();
     private Integer id;
     private final UUID room;
+
+    public Workspace(Integer id, UUID room, List<Trait> traits, List<Timespan> existingReservations) {
+        this.id = id;
+        this.room = room;
+        this.traits = traits;
+        this.existingReservations = existingReservations;
+    }
 
     public Workspace(Integer id, UUID room) {
         this.id = id;
