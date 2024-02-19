@@ -57,12 +57,21 @@ public class Workspace {
     }
 
     public void addReservation(Timespan timespan) {
-        existingReservations.add(timespan);
+        if (isValid(timespan) && !isOverlap(timespan)) {
+            existingReservations.add(timespan);
+        }
     }
 
     public void removeTrait(Trait traitToRemove) {
         traits.remove(traitToRemove);
     }
+
+    public void removeReservation(Timespan timespan) {
+        if (isValid(timespan) && !isOverlap(timespan)) {
+            existingReservations.remove(timespan);
+        }
+    }
+
     @Override
     public String toString() {
         return "Workspace{"
