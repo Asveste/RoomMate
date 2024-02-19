@@ -60,6 +60,9 @@ public class Workspace {
         existingReservations.add(timespan);
     }
 
+    public void removeTrait(Trait traitToRemove) {
+        traits.remove(traitToRemove);
+    }
     @Override
     public String toString() {
         return "Workspace{"
@@ -86,4 +89,5 @@ public class Workspace {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }
