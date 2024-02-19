@@ -1,66 +1,37 @@
 package roommate.domain.model;
 
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class Workspace {
 
+    private final List<Trait> traits = new ArrayList<>();
+    private final List<Timespan> existingReservations = new ArrayList<>();
     private final Integer id;
-    private final Room room;
-    private final Set<Trait> traits;
-    private final Set<Timespan> existingReservations;
+    private final UUID room;
 
-    public Workspace(Integer id, Room number) {
+    public Workspace(Integer id, UUID room) {
         this.id = id;
-        this.room = number;
-        this.traits = new HashSet<>();
-        this.existingReservations = new HashSet<>();
+        this.room = room;
     }
 
-    public Workspace(Integer id, Room number, Set<Trait> traits) {
-        this.id = id;
-        this.room = number;
-        this.traits = traits;
-        this.existingReservations = new HashSet<>();
-    }
-
-    public Workspace(Integer id, Room number, Set<Trait> traits,
-                     Set<Timespan> existingReservations) {
-        this.id = id;
-        this.room = number;
-        this.traits = traits;
-        this.existingReservations = existingReservations;
-    }
-
-    public Integer getId() {
+    public Integer id() {
         return id;
     }
 
-    public Room getRoom() {
+    public UUID room() {
         return room;
     }
 
-    public Set<Trait> getTraits() {
+    public List<Trait> traits() {
         return traits;
     }
 
-    public Set<Timespan> getExistingReservations() {
+    public List<Timespan> existingReservations() {
         return existingReservations;
-    }
-
-    public Integer getRoomId() {
-        return this.room.getId();
-    }
-
-
-    @Override
-    public String toString() {
-        return "Workspace{" +
-                "id=" + id +
-                ", room=" + room +
-                ", traits=" + traits +
-                ", existingReservations=" + existingReservations +
-                '}';
     }
 
     public boolean isOverlap(Timespan newReservation) {
@@ -82,10 +53,37 @@ public class Workspace {
     }
 
     public void addTrait(Trait trait) {
-        this.traits.add(trait);
+        traits.add(trait);
     }
 
     public void addReservation(Timespan timespan) {
-        this.existingReservations.add(timespan);
+        existingReservations.add(timespan);
+    }
+
+    @Override
+    public String toString() {
+        return "Workspace{"
+                + "id=" + id
+                + ", room=" + room
+                + ", traits=" + traits
+                + ", existingReservations=" + existingReservations
+                + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Workspace workspace = (Workspace) o;
+        return Objects.equals(id, workspace.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
