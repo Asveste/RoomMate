@@ -19,5 +19,4 @@ public class OnionArchitecture {
             .adapter("web", "roommate.adapter.web")
             .adapter("persistence", "roommate.adapter.db");
 
-
 }
