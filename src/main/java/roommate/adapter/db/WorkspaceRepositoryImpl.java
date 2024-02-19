@@ -47,7 +47,6 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     @Override
     public roommate.domain.model.Workspace save(roommate.domain.model.Workspace workspace) {
-        System.out.println("Davor");
         Integer id = db.findById(workspace.id())
                 .map(roommate.adapter.db.Workspace::id)
                 .orElse(null);
