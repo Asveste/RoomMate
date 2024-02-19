@@ -18,37 +18,35 @@ package adapter{
 
         class WorkspaceRepositoryImpl{
             - WorkspaceDao : db
-            + Integer : save(Workspace workspace)
+            + Workspace : save(Workspace workspace)
             + void : deleteById(Integer id)
             + Optional<Workspace> : findById(Integer id)
-            + Set<Workspace> : findAll()
+            + Collection<Workspace> : findAll()
         }
         interface WorkspaceDao << extends CrudRepository[Workspace, Integer] >>{
             + WorkspaceDto : save(WorkspaceDto workspaceDto)
             + void : deleteById(Integer id)
             + Optional<WorkspaceDto> : findById(Integer id)
-            + Set<WorkspaceDto> : findAll()
+            + Collection<WorkspaceDto> : findAll()
         }
-        class RoomDto << Record >> {
-            - UUID: uuid
-            - @Id Integer : id
-            - String : name
-        }
+'        class RoomDto << Record >> {
+'            - UUID: uuid
+'            - @Id Integer : id
+'            - String : name
+'        }
         class TraitDto << Record >> {
-            - @Id Integer : id
-            - String : name
+            - String : trait
         }
         class TimespanDto << Record >> {
             - LocalDate : date
             - LocalTime : startTime
             - LocalTime : endTime
-            - Integer : workspaceId
         }
         class WorkspaceDto << Record >> {
             - @Id Integer : id
-            - Integer : roomId
-            - Set<Trait> : traitId
-            - Set<Timespan> : existingReservations
+            - UUID : room
+            - List<Trait> : traits
+            - List<Timespan> : existingReservations
         }
 
     }
@@ -73,24 +71,24 @@ package domain{
     package service{
 
         interface WorkspaceRepository{
-            + Integer : save(Workspace workspace)
+            + Workspace : save(Workspace workspace)
             + void : deleteById(Integer id)
             + Optional<Workspace> : findById(Integer id)
-            + List<Workspace> : findAll()
+            + Collection<Workspace> : findAll()
         }
         class BookingService{
             - WorkspaceRepository : repo
-            + <Workspace>List : allWorkspaces()
-            + <Workspace>List : allWorkspacesByTraits(Collection<Trait> traits)
-            + Workspace : getWorkspace(Integer id)
+            + List<Workspace> : allWorkspaces()
+            + Workspace : workspace(Integer id)
+            + List<Workspace> : allWorkspacesByTraits(Collection<Trait> traits)
             + void : addTrait(Integer id, String trait)
             + void : addTraits(Integer id, List<Trait> traits)
             + Set<Workspace> : findByTraits(List<Trait> traits)
         }
-        class NotExistentException{
+        class NotExistentException << extends RuntimeException >> {
             This handles failed id searches
         }
-        class UnvalidatedInput{
+        class InvalidInput << extends RuntimeException >> {
             This handles wrong input
         }
 
@@ -98,28 +96,28 @@ package domain{
 
     package model{
 
-        class Room{
-            - UUID : uuid
-            - Integer : id
-            - String : name
-        }
-        class Trait{
-            - Integer : id
-            - String : name
+'        class Room{
+'            - Integer : id
+'            - UUID : uuid
+'            - String : name
+'        }
+        class Trait << Record >> {
+            - String : trait
         }
         class Timespan << Record >> {
             - LocalDate : date
             - LocalTime : startTime
             - LocalTime : endTime
-            - Integer : workspaceId
         }
         class Workspace{
             - Integer : id
-            - Room : number
+            - UUID : room
             - List<Trait> : traits
-            - Set<Timespan> : existingReservations
-            + boolean : isOverlap(Timespan timespan)
+            - List<Timespan> : existingReservations
             + boolean : isValid(Timespan timespan)
+            + boolean : isOverlap(Timespan timespan)
+            + void : addTrait(Trait trait)
+            + void : addReservation(Timespan timespan)
             + void : roomDtoTransfer(RoomDto dto)
             + void : traitDtoTransfer(TraitDto dto)
             + void : timespanDtoTransfer(TimespanDto dto)
@@ -143,7 +141,7 @@ WorkspaceRepositoryImpl --> WorkspaceDao
 WorkspaceDto --> TraitDto
 WorkspaceDto --> TimespanDto
 
-RoomDto --> WorkspaceRepositoryImpl
+'RoomDto --> WorkspaceRepositoryImpl
 TraitDto --> WorkspaceRepositoryImpl
 TimespanDto --> WorkspaceRepositoryImpl
 WorkspaceDto --> WorkspaceRepositoryImpl
@@ -151,10 +149,10 @@ WorkspaceDto --> WorkspaceRepositoryImpl
 'Domain - Application Service
 BookingService --> WorkspaceRepository
 BookingService --> NotExistentException
-BookingService --> UnvalidatedInput
+BookingService --> InvalidInput
 
 'Domain - Model
-Workspace --> Room
+'Workspace --> Room
 Workspace --> Trait
 Workspace --> Timespan
 
