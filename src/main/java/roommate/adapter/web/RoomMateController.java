@@ -87,7 +87,8 @@ public class RoomMateController {
     }
 
     @PostMapping("/room_details/{id}")
-    public String roomDetailsBooking(Model model, @PathVariable("id") Integer roomId, @Valid Timespan timespan, BindingResult bindingResult) {
+    public String roomDetailsBooking(Model model, @PathVariable("id") Integer roomId, @Valid Timespan timespan, BindingResult bindingResult,
+                                     boolean recurringReservation) {
         model.addAttribute("workspaceId", roomId);
         if (timespan.startTime().isAfter(timespan.endTime()) || timespan.date().isBefore(LocalDate.now())) {
             System.out.println("Invalid");
@@ -96,6 +97,16 @@ public class RoomMateController {
         if (bindingResult.hasErrors()) {
             return "room_details";
         }
+
+        if (recurringReservation) {
+            try {
+                service.addRecurringReservation(roomId, timespan);
+                return "redirect:/success";
+            } catch (InvalidInput e) {
+                return "redirect:/room_details/" + roomId;
+            }
+        }
+
         try {
             service.addReservation(roomId, timespan);
             return "redirect:/success";

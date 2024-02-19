@@ -28,7 +28,11 @@
             <label class="form-label" for="endTime">Endzeit</label>
             <input class="form-control" id="endTime" name="endTime" required type="time">
         </div>
-        <button class="btn btn-primary" type="submit">Reservieren</button>
+        <div class="mb-3">
+            <input class="form-check-label" id="recurringReservation" name="recurringReservation" type="checkbox">
+            <label class="form-check" for="recurringReservation">Wiederholende Reservierung</label>
+        </div>
+        <button class="btn btn-primary my-3" type="submit">Reservieren</button>
     </form>
     <a class="text-body-secondary py-8" href="index">Zurück zur Startseite</a>
 </div>
