@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Workspace {
+public class Workspace implements Comparable<Workspace> {
 
     private final List<Trait> traits = new ArrayList<>();
     private final List<Timespan> existingReservations = new ArrayList<>();
@@ -103,4 +103,8 @@ public class Workspace {
         return Objects.hash(id);
     }
 
+    @Override
+    public int compareTo(Workspace other) {
+        return id.compareTo(other.id);
+    }
 }
