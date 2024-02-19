@@ -2,79 +2,76 @@ package roommate.adapter.db;
 
 import org.springframework.stereotype.Repository;
 import roommate.applicationservice.WorkspaceRepository;
-import roommate.domain.model.Room;
-import roommate.domain.model.Timespan;
-import roommate.domain.model.Trait;
-import roommate.domain.model.Workspace;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Repository
 public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     private final WorkspaceDao db;
-    private final RoomDao dbr;
 
-    public WorkspaceRepositoryImpl(WorkspaceDao db, RoomDao dbr) {
+    public WorkspaceRepositoryImpl(WorkspaceDao db) {
         this.db = db;
-        this.dbr = dbr;
     }
 
-    private Trait convertTrait(roommate.adapter.db.Trait trait) {
-        return new Trait(trait.id(), trait.name());
+//    private Room convertRoom(roommate.adapter.db.Room room) {
+//        return new Room(room.uuid(), room.id(), room.name());
+//    }
+
+    private roommate.domain.model.Trait convertTrait(Trait trait) {
+        return new roommate.domain.model.Trait(trait.trait());
     }
 
-    private Timespan convertTimespan(roommate.adapter.db.Timespan timespan) {
-        return new Timespan(timespan.date(), timespan.startTime(), timespan.endTime(),
-                timespan.workspaceId());
+    private roommate.domain.model.Timespan convertTimespan(Timespan timespan) {
+        return new roommate.domain.model.Timespan(timespan.date(), timespan.startTime(),
+                timespan.endTime());
     }
 
-    private Room convertRoom(roommate.adapter.db.Room room) {
-        return new Room(room.uuid(), room.id(), room.name());
-    }
-
-    private Workspace convertWorkspace(roommate.adapter.db.Workspace workspace) {
-        Workspace result = new Workspace(workspace.id(), getRoom(workspace.roomId()));
-        workspace.traitId().forEach(d -> result.addTrait(convertTrait(d)));
+    private roommate.domain.model.Workspace convertWorkspace(Workspace workspace) {
+        roommate.domain.model.Workspace result =
+                new roommate.domain.model.Workspace(workspace.id(), workspace.room());
+        workspace.traits().forEach(d -> result.addTrait(convertTrait(d)));
         workspace.existingReservations().forEach(d -> result.addReservation(convertTimespan(d)));
         return result;
     }
 
-    private Room getRoom(Integer id) {
-        Optional<roommate.adapter.db.Room> result = dbr.findById(id);
-        if (result.isPresent()) {
-            return convertRoom(result.get());
-        }
-        return null;
-    }
+//    private Room getRoom(Integer id) {
+//        Optional<roommate.adapter.db.Room> result = dbr.findById(id);
+//        if (result.isPresent()) {
+//            return convertRoom(result.get());
+//        }
+//        return null;
+//    }
 
     @Override
-    public Workspace save(Workspace workspace) {
-        Integer id = db.findById(workspace.getId())
+    public roommate.domain.model.Workspace save(roommate.domain.model.Workspace workspace) {
+        System.out.println("Davor");
+        Integer id = db.findById(workspace.id())
                 .map(roommate.adapter.db.Workspace::id)
                 .orElse(null);
-        Set<roommate.adapter.db.Trait> traits = workspace.getTraits().stream()
+        List<roommate.adapter.db.Trait> traits = workspace.traits().stream()
                 .map(this::extractTrait)
-                .collect(Collectors.toSet());
-        Set<roommate.adapter.db.Timespan> times = workspace.getExistingReservations().stream()
+                .toList();
+        List<roommate.adapter.db.Timespan> existingReservations = workspace.existingReservations()
+                .stream()
                 .map(this::extractTime)
-                .collect(Collectors.toSet());
+                .toList();
         roommate.adapter.db.Workspace obj =
-                new roommate.adapter.db.Workspace(id, workspace.getRoomId(), traits, times);
+                new roommate.adapter.db.Workspace(id, workspace.room(), traits,
+                        existingReservations);
         roommate.adapter.db.Workspace save = db.save(obj);
         return convertWorkspace(save);
     }
 
-    private roommate.adapter.db.Trait extractTrait(Trait trait) {
-        return new roommate.adapter.db.Trait(trait.getId(), trait.getTrait());
+    private Trait extractTrait(roommate.domain.model.Trait trait) {
+        return new Trait(trait.trait());
     }
 
-    private roommate.adapter.db.Timespan extractTime(Timespan timespan) {
-        return new roommate.adapter.db.Timespan(timespan.date(), timespan.startTime(),
-                timespan.endTime(), timespan.workspaceId());
+    private Timespan extractTime(roommate.domain.model.Timespan timespan) {
+        return new Timespan(timespan.date(), timespan.startTime(),
+                timespan.endTime());
     }
 
     @Override
@@ -83,13 +80,13 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     @Override
-    public Optional<Workspace> findById(Integer id) {
+    public Optional<roommate.domain.model.Workspace> findById(Integer id) {
         return db.findById(id).map(this::convertWorkspace);
     }
 
     @Override
-    public Set<Workspace> findAll() {
+    public Collection<roommate.domain.model.Workspace> findAll() {
         Collection<roommate.adapter.db.Workspace> workspace = db.findAll();
-        return workspace.stream().map(this::convertWorkspace).collect(Collectors.toSet());
+        return workspace.stream().map(this::convertWorkspace).toList();
     }
 }
