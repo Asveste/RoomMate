@@ -2,8 +2,8 @@ package roommate.applicationservice;
 
 import roommate.domain.model.Workspace;
 
+import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 
 public interface WorkspaceRepository {
     Workspace save(Workspace workspace);
@@ -12,5 +12,5 @@ public interface WorkspaceRepository {
 
     Optional<Workspace> findById(Integer id);
 
-    Set<Workspace> findAll();
+    Collection<Workspace> findAll();
 }
