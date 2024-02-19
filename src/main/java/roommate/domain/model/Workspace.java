@@ -10,11 +10,15 @@ public class Workspace {
 
     private final List<Trait> traits = new ArrayList<>();
     private final List<Timespan> existingReservations = new ArrayList<>();
-    private final Integer id;
+    private Integer id;
     private final UUID room;
 
     public Workspace(Integer id, UUID room) {
         this.id = id;
+        this.room = room;
+    }
+
+    public Workspace(UUID room) {
         this.room = room;
     }
 
