@@ -1,7 +1,6 @@
 package roommate.adapter.db;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +8,16 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import roommate.applicationservice.WorkspaceRepository;
-import roommate.domain.model.Room;
+import roommate.domain.model.Timespan;
 import roommate.domain.model.Trait;
 import roommate.domain.model.Workspace;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJdbcTest
@@ -23,41 +26,37 @@ public class DatabaseTest {
 
     @Autowired
     WorkspaceDao workspaceRepository;
-    RoomDao roomRepository;
     WorkspaceRepository repository;
         @BeforeEach
         void setup() {
-            repository = new WorkspaceRepositoryImpl(workspaceRepository, roomRepository);
+            repository = new WorkspaceRepositoryImpl(workspaceRepository);
         }
         @Test
         @DisplayName("Ein Workspace kann gespeichert und geladen werden")
         void test_1() {
             // Arrange
-            UUID uuid = UUID.randomUUID();
-            Room room = new Room(uuid,1,"foo");
-            Trait trait = new Trait(2,"bar");
-            roommate.domain.model.Workspace workspace = new roommate.domain.model.Workspace(123, room);
-            workspace.addTrait(trait);
+            Workspace workspace = new Workspace(123, UUID.randomUUID());
+
+            workspace.addReservation(new Timespan(LocalDate.now(), LocalTime.of(14, 0), LocalTime.of(16, 0)));
+            workspace.addReservation(new Timespan(LocalDate.now(), LocalTime.of(17, 0), LocalTime.of(18, 0)));
+
+            workspace.addTrait(new Trait("foo"));
+            workspace.addTrait(new Trait("bar"));
             // Act
             Workspace saved = repository.save(workspace);
-            Optional<roommate.domain.model.Workspace> geladen = repository.findById(saved.getId());
+            Optional<Workspace> loaded = repository.findById(saved.id());
             // Assert
-            assertThat(geladen.map(Workspace::getId).orElseThrow()).isEqualTo(123);
-            assertThat(geladen.map(Workspace::getRoom).orElseThrow()).isEqualTo(room);
-            //Set<Trait> loadedTraits = geladen.map(roommate.domain.model.Workspace::getTraits).orElseThrow();
-            //assertThat(loadedTraits.stream().findFirst()).isEqualTo(trait);
+            assertThat(loaded.map(Workspace::existingReservations).orElseThrow()).hasSize(2);
+            assertThat(loaded.map(Workspace::traits).orElseThrow()).hasSize(2);
         }
-        @Disabled
+
         @Test
         @DisplayName("Wenn es mehrere Workspaces gibt, werden alle gefunden")
         @Sql("findall.sql")
         void test_2() {
-            // Arrange
+            // Arrange & Act
             Collection<roommate.domain.model.Workspace> all = repository.findAll();
-            // Act
-
             // Assert
+            assertThat(all).hasSize(3);
         }
-
-
 }
