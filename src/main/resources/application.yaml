@@ -1,4 +1,15 @@
+logging:
+    level:
+        root: warn
+
 spring:
+    datasource:
+        url: jdbc:postgresql://localhost:5432/roommate
+        password: iamgroot
+        username: roommate
+    flyway:
+        locations: classpath:db/migration
+    #        ,classpath:db/postgres
     security:
         oauth2:
             client:
