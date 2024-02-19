@@ -5,6 +5,7 @@ import roommate.domain.model.Timespan;
 import roommate.domain.model.Trait;
 import roommate.domain.model.Workspace;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -70,6 +71,28 @@ public class BookingService {
             workspace.addReservation(timespan);
             repo.save(workspace);
         }
+    }
+
+    public void addRecurringReservation(Integer id, Timespan timespan) {
+        if (id == null || timespan == null) {
+            throw new InvalidInput();
+        }
+        Workspace workspace = workspace(id);
+        List<Timespan> recurring = new ArrayList<Timespan>();
+        recurring.add(timespan);
+        for (int i = 1; i < 8; i++) {
+            recurring.add(new Timespan(timespan.date().plusWeeks(i), timespan.startTime(), timespan.endTime()));
+        }
+        recurring.forEach(timespan1 -> {
+            if (!workspace.isValid(timespan) || workspace.isOverlap(timespan)) {
+                throw new InvalidInput();
+            }
+        });
+        recurring.forEach(timespan1 -> {
+            workspace.addReservation(timespan);
+            repo.save(workspace);
+        });
+
     }
 
     public void deleteWorkspace(Integer id) {
