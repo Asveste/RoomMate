@@ -7,6 +7,7 @@ import roommate.domain.model.Workspace;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class BookingService {
@@ -29,6 +30,12 @@ public class BookingService {
         return repo.findAll().stream()
                 .filter(workspace -> workspace.traits().containsAll(traits))
                 .toList();
+    }
+
+    public Integer addWorkspace() {
+        Workspace workspace = new Workspace(null, UUID.randomUUID());
+        Workspace savedWorkspace = repo.save(workspace);
+        return savedWorkspace.id();
     }
 
     public void addTrait(Integer id, String trait) {
