@@ -3,9 +3,13 @@ package roommate.applicationservice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import roommate.domain.model.Timespan;
 import roommate.domain.model.Trait;
 import roommate.domain.model.Workspace;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,7 +30,6 @@ public class ServiceTests {
     @Test
     @DisplayName("Ein Workspace kann hinzugefügt werden")
     void test_1() {
-
         BookingService service = new BookingService(repo);
 
         when(repo.save(any())).thenReturn(new Workspace(id, UUID.randomUUID()));
@@ -44,7 +47,6 @@ public class ServiceTests {
     @Test
     @DisplayName("Traits können hinzugefügt werden")
     void test_2() {
-
         Workspace workspace = new Workspace(id, UUID.randomUUID());
         when(repo.findById(any())).thenReturn(Optional.of(workspace));
         BookingService service = new BookingService(repo);
@@ -60,7 +62,6 @@ public class ServiceTests {
     @Test
     @DisplayName("Die Workspaces sind sortiert")
     void test_3() {
-
         when(repo.findAll()).thenReturn(List.of(
                 new Workspace(33, room),
                 new Workspace(800, room),
@@ -78,5 +79,51 @@ public class ServiceTests {
         BookingService service = new BookingService(repo);
         assertThat(service.allWorkspaces()).isEmpty();
         assertThrows(NotExistentException.class, () -> service.workspace(id));
+    }
+
+    @Test
+    @DisplayName("Es kann eine Reservierung hinzugefügt werden")
+    void testAddReservation() {
+        Workspace workspace = new Workspace(id, UUID.randomUUID());
+        when(repo.findById(any())).thenReturn(Optional.of(workspace));
+        BookingService service = new BookingService(repo);
+        service.addReservation(id, new Timespan(LocalDate.now(), LocalTime.of(14, 0), LocalTime.of(15, 0), 1));
+
+        ArgumentCaptor<Workspace> captor = ArgumentCaptor.forClass(Workspace.class);
+        verify(repo).save(captor.capture());
+        Workspace savedReservation = captor.getValue();
+
+        assertThat(savedReservation.existingReservations()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("addRecurringReservation legt erfolgreich wiederkehrende Reservierungen an")
+    void testAddRecurringReservation() {
+        Workspace workspace = new Workspace(id, UUID.randomUUID());
+        when(repo.findById(any())).thenReturn(Optional.of(workspace));
+        BookingService service = new BookingService(repo);
+        service.addRecurringReservation(id, new Timespan(LocalDate.now(), LocalTime.of(14, 0), LocalTime.of(15, 0), 2));
+
+        ArgumentCaptor<Workspace> captor = ArgumentCaptor.forClass(Workspace.class);
+        verify(repo).save(captor.capture());
+        Workspace savedWorkspace = captor.getValue();
+        List<Timespan> allReservations = new ArrayList<>(savedWorkspace.existingReservations());
+
+        assertThat(allReservations).hasSize(8);
+    }
+
+    @Test
+    @DisplayName("Ein Workspace kann gelöscht werden")
+    void testDeleteWorkspace() {
+        BookingService service = new BookingService(repo);
+        Integer workspaceId = 1;
+        Workspace mockWorkspace = new Workspace(workspaceId, UUID.randomUUID());
+
+        when(repo.findById(workspaceId)).thenReturn(Optional.of(mockWorkspace));
+
+        service.deleteWorkspace(workspaceId);
+
+        verify(repo).findById(workspaceId);
+        verify(repo).deleteById(workspaceId);
     }
 }

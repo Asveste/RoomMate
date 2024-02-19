@@ -84,15 +84,12 @@ public class BookingService {
             recurring.add(new Timespan(timespan.date().plusWeeks(i), timespan.startTime(), timespan.endTime(), timespan.timespanId()));
         }
         recurring.forEach(timespan1 -> {
-            if (!workspace.isValid(timespan) || workspace.isOverlap(timespan)) {
+            if (!workspace.isValid(timespan1) || workspace.isOverlap(timespan1)) {
                 throw new InvalidInput();
             }
         });
-        recurring.forEach(timespan1 -> {
-            workspace.addReservation(timespan);
-            repo.save(workspace);
-        });
-
+        recurring.forEach(workspace::addReservation);
+        repo.save(workspace);
     }
 
     public void deleteWorkspace(Integer id) {
