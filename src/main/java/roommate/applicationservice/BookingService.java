@@ -32,8 +32,8 @@ public class BookingService {
                 .toList();
     }
 
-    public Integer addWorkspace() {
-        Workspace workspace = new Workspace(null, UUID.randomUUID());
+    public Integer addWorkspace(UUID room) {
+        Workspace workspace = new Workspace(room);
         Workspace savedWorkspace = repo.save(workspace);
         return savedWorkspace.id();
     }
