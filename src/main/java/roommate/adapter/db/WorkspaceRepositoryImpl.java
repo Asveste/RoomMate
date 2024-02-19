@@ -26,7 +26,7 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     private roommate.domain.model.Timespan convertTimespan(Timespan timespan) {
         return new roommate.domain.model.Timespan(timespan.date(), timespan.startTime(),
-                timespan.endTime());
+                timespan.endTime(), timespan.timespanId());
     }
 
     private roommate.domain.model.Workspace convertWorkspace(Workspace workspace) {
@@ -71,7 +71,7 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     private Timespan extractTime(roommate.domain.model.Timespan timespan) {
         return new Timespan(timespan.date(), timespan.startTime(),
-                timespan.endTime());
+                timespan.endTime(), timespan.timespanId());
     }
 
     @Override

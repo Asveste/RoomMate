@@ -17,6 +17,7 @@ CREATE TABLE timespan
     date          DATE    NOT NULL,
     start_time    TIME    NOT NULL,
     end_time      TIME    NOT NULL,
+    timespan_id SERIAL PRIMARY KEY,
     workspace     INTEGER NOT NULL,
     workspace_key INTEGER NOT NULL,
     FOREIGN KEY (workspace) REFERENCES workspace (id)

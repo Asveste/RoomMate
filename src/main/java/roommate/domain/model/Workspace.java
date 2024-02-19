@@ -61,9 +61,7 @@ public class Workspace implements Comparable<Workspace> {
     }
 
     public void addReservation(Timespan timespan) {
-        if (isValid(timespan) && !isOverlap(timespan)) {
-            existingReservations.add(timespan);
-        }
+        existingReservations.add(timespan);
     }
 
     public void removeTrait(Trait traitToRemove) {

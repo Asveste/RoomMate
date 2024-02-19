@@ -78,10 +78,10 @@ public class BookingService {
             throw new InvalidInput();
         }
         Workspace workspace = workspace(id);
-        List<Timespan> recurring = new ArrayList<Timespan>();
+        List<Timespan> recurring = new ArrayList<>();
         recurring.add(timespan);
         for (int i = 1; i < 8; i++) {
-            recurring.add(new Timespan(timespan.date().plusWeeks(i), timespan.startTime(), timespan.endTime()));
+            recurring.add(new Timespan(timespan.date().plusWeeks(i), timespan.startTime(), timespan.endTime(), timespan.timespanId()));
         }
         recurring.forEach(timespan1 -> {
             if (!workspace.isValid(timespan) || workspace.isOverlap(timespan)) {

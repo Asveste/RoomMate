@@ -37,8 +37,8 @@ public class DatabaseTest {
             // Arrange
             Workspace workspace = new Workspace(123, UUID.randomUUID());
 
-            workspace.addReservation(new Timespan(LocalDate.now(), LocalTime.of(14, 0), LocalTime.of(16, 0)));
-            workspace.addReservation(new Timespan(LocalDate.now(), LocalTime.of(17, 0), LocalTime.of(18, 0)));
+            workspace.addReservation(new Timespan(LocalDate.now(), LocalTime.of(14, 0), LocalTime.of(16, 0), 42));
+            workspace.addReservation(new Timespan(LocalDate.now(), LocalTime.of(17, 0), LocalTime.of(18, 0), 43));
 
             workspace.addTrait(new Trait("foo"));
             workspace.addTrait(new Trait("bar"));
