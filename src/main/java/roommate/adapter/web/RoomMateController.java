@@ -8,15 +8,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import roommate.applicationservice.BookingService;
+import roommate.applicationservice.InvalidInput;
 import roommate.domain.model.Timespan;
 import roommate.domain.model.Trait;
 import roommate.domain.model.Workspace;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -69,6 +70,43 @@ public class RoomMateController {
         model.addAttribute("allTraits", allTraits);
 
         return "workspace_booking";
+    }
+
+    @GetMapping("/room_details/{id}")
+    public String roomDetails(Model model, @PathVariable("id") Integer roomId) {
+        List<Workspace> workspaces = service.allWorkspaces();
+
+        Optional<Workspace> matchingWorkspace = workspaces
+                .stream().filter(workspace -> Objects.equals(workspace.id(), roomId)).findFirst();
+
+        Workspace workspace = matchingWorkspace.get();
+
+        model.addAttribute("workspaceId", roomId);
+        model.addAttribute("workspaces", workspace);
+        return "room_details";
+    }
+
+    @PostMapping("/room_details/{id}")
+    public String roomDetailsBooking(Model model, @PathVariable("id") Integer roomId, @Valid Timespan timespan, BindingResult bindingResult) {
+        model.addAttribute("workspaceId", roomId);
+        if (timespan.startTime().isAfter(timespan.endTime()) || timespan.date().isBefore(LocalDate.now())) {
+            System.out.println("Invalid");
+            return "redirect:/room_details/" + roomId;
+        }
+        if (bindingResult.hasErrors()) {
+            return "room_details";
+        }
+        try {
+            service.addReservation(roomId, timespan);
+            return "redirect:/success";
+        } catch (InvalidInput e) {
+            return "redirect:/room_details/" + roomId;
+        }
+    }
+
+    @GetMapping("/success")
+    public String bookingSuccessful() {
+        return "success";
     }
 
     @GetMapping("/room_overview")

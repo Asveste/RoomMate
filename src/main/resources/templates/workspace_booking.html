@@ -84,7 +84,7 @@
     <ul class="list-group py-4" th:remove="all-but-first">
         <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
             th:each="workspace : ${workspaces}">
-            <a href="#" th:href="@{/details/{id}(id=${workspace.id})}">
+            <a href="#" th:href="@{/room_details/{id}(id=${workspace.id})}">
                 <!--                <span th:text="*{room.number}">Raumnummer</span>-->
                 <span th:text="*{workspace.id}">Arbeitsplatznummer</span>
             </a>

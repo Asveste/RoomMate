@@ -5,16 +5,31 @@
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <link rel="stylesheet" th:href="@{css/bootstrap.min.css}">
     <link href="../static/css/bootstrap.min.css" rel="stylesheet">
-    <title>RoomMate - Raumdetails</title>
+    <title>RoomMate - Arbeitsplatzdetails</title>
 </head>
 <body data-bs-theme="dark">
 <div class="container">
-    <h1 class="text-body-emphasis py-4">Raum <span th:text="*{room.number}"></span></h1>
+    <h1 class="text-body-emphasis py-4">Arbeitsplatz <span th:text="*{workspaces.id()}"></span></h1>
     <ul>
-        <li th:each="trait : ${room.number.traits}">
-            <span th:text="${trait}">Eigenschaft</span>
+        <li class="list-group py-4" th:each="trait : ${workspaces.traits()}">
+            <span th:text="${trait.trait()}">Eigenschaft</span>
         </li>
     </ul>
+    <form method="post" th:action="@{/room_details/{id}(id=${workspaceId})}">
+        <div class="mb-3">
+            <label class="form-label" for="date">Datum</label>
+            <input class="form-control" id="date" name="date" required type="date">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="startTime">Startzeit</label>
+            <input class="form-control" id="startTime" name="startTime" required type="time">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="endTime">Endzeit</label>
+            <input class="form-control" id="endTime" name="endTime" required type="time">
+        </div>
+        <button class="btn btn-primary" type="submit">Reservieren</button>
+    </form>
     <a class="text-body-secondary py-8" href="index">Zurück zur Startseite</a>
 </div>
 </body>
