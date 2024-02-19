@@ -7,10 +7,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import roommate.applicationservice.BookingService;
 import roommate.domain.model.Timespan;
+import roommate.domain.model.Trait;
+import roommate.domain.model.Workspace;
+
+import java.util.List;
 
 @Controller
 public class RoomMateController {
+    private final BookingService service;
+
+    public RoomMateController(BookingService service) {
+        this.service = service;
+    }
 
     @GetMapping("/index")
     public String index() {
@@ -18,15 +28,16 @@ public class RoomMateController {
     }
 
     @GetMapping("/workspace_booking")
-    public String workspaceBooking(@Valid Timespan timespan, BindingResult bindingResult) {
+    public String workspaceBooking(Model model, @Valid Timespan timespan, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "workspace_booking";
         }
         return "workspace_booking";
     }
-
     @GetMapping("/room_overview")
-    public String roomOverview() {
+    public String roomOverview(Model model) {
+        List<Workspace> workspaces = service.allWorkspaces();
+        model.addAttribute("workspaces", workspaces);
         return "room_overview";
     }
 
