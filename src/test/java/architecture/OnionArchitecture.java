@@ -13,7 +13,7 @@ public class OnionArchitecture {
 
     @ArchTest
     ArchRule rule = onionArchitecture()
-            .domainModels("roommate.domain.model..")
+            .domainModels("roommate.domain..")
             .domainServices("roommate.applicationservice..")
             .applicationServices("roommate.applicationservice..")
             .adapter("web", "roommate.adapter.web")
