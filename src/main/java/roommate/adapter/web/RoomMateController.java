@@ -98,11 +98,13 @@ public class RoomMateController {
                                              BindingResult bindingResult, boolean recurringReservation) {
         model.addAttribute("workspaceId", roomId);
 
+        Workspace workspace = service.workspace(roomId);
+
         if (bindingResult.hasErrors()) {
             return "redirect:/room_details/" + roomId;
         }
 
-        if (timespan.date() != null && timespan.date().isBefore(LocalDate.now())) {
+        if (timespan.date() != null && timespan.date().isBefore(LocalDate.now()) || workspace.isOverlap(timespan)) {
             return "redirect:/room_details/" + roomId;
         }
 
