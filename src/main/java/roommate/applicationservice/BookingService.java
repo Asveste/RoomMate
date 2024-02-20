@@ -1,6 +1,7 @@
 package roommate.applicationservice;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import roommate.domain.model.Timespan;
 import roommate.domain.model.Trait;
 import roommate.domain.model.Workspace;
@@ -63,6 +64,7 @@ public class BookingService {
         return savedWorkspace.id();
     }
 
+    @Transactional
     public void addTraitAdmin(Integer id, String trait) {
         if (id == null || trait == null || trait.isBlank()) {
             throw new InvalidInput();
@@ -72,6 +74,7 @@ public class BookingService {
         repo.save(workspace);
     }
 
+    @Transactional
     public void addTraits(Integer id, List<String> traits) {
         if (id == null || traits == null || traits.isEmpty()) {
             throw new InvalidInput();
@@ -86,6 +89,7 @@ public class BookingService {
         });
     }
 
+    @Transactional
     public void addReservation(Integer id, Timespan timespan) {
         if (id == null || timespan == null) {
             throw new InvalidInput();
@@ -97,6 +101,7 @@ public class BookingService {
         }
     }
 
+    @Transactional
     public void addRecurringReservation(Integer id, Timespan timespan) {
         if (id == null || timespan == null) {
             throw new InvalidInput();
@@ -126,6 +131,7 @@ public class BookingService {
         repo.deleteById(id);
     }
 
+    @Transactional
     public void deleteTraitAdmin(Integer id, String trait) {
         if (id == null || trait == null || trait.isBlank()) {
             throw new InvalidInput();
@@ -136,12 +142,14 @@ public class BookingService {
         repo.save(workspace);
     }
 
+    @Transactional
     public void lockWorkspaceAdmin(Integer id, Timespan timespan) {
         Workspace workspace = workspace(id);
         workspace.overwriteReservation(timespan);
         repo.save(workspace);
     }
 
+    @Transactional
     public void cancelReservationAdmin(Integer id, Timespan timespan) {
         if (id == null || timespan == null) {
             throw new InvalidInput();
@@ -151,6 +159,7 @@ public class BookingService {
         repo.save(workspace);
     }
 
+    @Transactional
     public void overwriteReservationsAdmin(Integer id, Timespan timespan) {
         if (id == null || timespan == null) {
             throw new InvalidInput();

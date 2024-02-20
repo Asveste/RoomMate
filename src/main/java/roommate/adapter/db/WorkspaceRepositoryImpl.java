@@ -1,6 +1,7 @@
 package roommate.adapter.db;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import roommate.applicationservice.WorkspaceRepository;
 
 import java.util.Collection;
@@ -9,6 +10,7 @@ import java.util.Optional;
 
 
 @Repository
+@Transactional
 public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     private final WorkspaceDao db;
 
