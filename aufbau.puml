@@ -8,16 +8,22 @@ package adapter{
 
     package web{
 
-        class RoomMateController << @Controller >>{
-            - BookingService : bookingService
+        class RoomMateController << @Controller >> {
+            - BookingService : service
         }
 
     }
 
     package db{
 
-        class WorkspaceRepositoryImpl{
+        class WorkspaceRepositoryImpl <<@Repository>> {
             - WorkspaceDao : db
+            - Trait : convertTrait(TraitDto traitDto)
+            - Timespan : convertTimespan(TimespanDto timespanDto)
+            - Workspace : convertWorkspace(WorkspaceDto workspaceDto)
+            - TraitDto : extractTrait(Trait trait)
+            - TimespanDto : extractTimespan(Timespan timespan)
+            --
             + Workspace : save(Workspace workspace)
             + void : deleteById(Integer id)
             + Optional<Workspace> : findById(Integer id)
@@ -35,32 +41,50 @@ package adapter{
 '            - String : name
 '        }
         class TraitDto << Record >> {
-            - String : trait
+            + String : trait
         }
         class TimespanDto << Record >> {
-            - LocalDate : date
-            - LocalTime : startTime
-            - LocalTime : endTime
+            + LocalDate : date
+            + LocalTime : startTime
+            + LocalTime : endTime
+            + @Id Integer : timespanId
         }
         class WorkspaceDto << Record >> {
-            - @Id Integer : id
-            - UUID : room
-            - List<Trait> : traits
-            - List<Timespan> : existingReservations
+            + @Id Integer : id
+            + UUID : room
+            + List<Trait> : traits
+            + List<Timespan> : existingReservations
         }
 
     }
 
     package api{
 
-        class RoomMateApi << @RestController >>{}
+        class Access << Record >> {
+            + String : key
+            + String : room
+        }
+        class AccessController << @RestController >> {
+            - << Record >> Key :
+                - String : id
+                - String owner
+            --
+            - << Record >> Room :
+                - String : id
+                - String raum
+        }
 
     }
 
     package security{
 
-        class SecurityConfig{}
-        class AppUserService{}
+        class SecurityConfig{
+            + SecurityFilterChain : config(HttpSecurity chainBuilder) throws Exception
+        }
+        class MethodSecurityConfig << @Configuration @EnableMethodSecurity(securedEnabled = true >> {}
+        class AppUserService << @Configuration | implements OAuth2UserService >> {
+            + OAuth2User : loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException
+        }
 
     }
 
@@ -76,14 +100,24 @@ package domain{
             + Optional<Workspace> : findById(Integer id)
             + Collection<Workspace> : findAll()
         }
-        class BookingService{
+        class BookingService <<@Service>> {
             - WorkspaceRepository : repo
             + List<Workspace> : allWorkspaces()
             + Workspace : workspace(Integer id)
             + List<Workspace> : allWorkspacesByTraits(Collection<Trait> traits)
-            + void : addTrait(Integer id, String trait)
-            + void : addTraits(Integer id, List<Trait> traits)
-            + Set<Workspace> : findByTraits(List<Trait> traits)
+            + List<Workspace> : allWorkspacesByTimespan(Collection<Timespan> timespans)
+            + List<Trait> : allTraitsFromWorkspace(Integer id)
+            + List<Trait> : allTraitsFromWorkspaces(List<Workspace> workspaces)
+            + List<Timespan> : allReservationsFromWorkspace(Integer id)
+            + Integer : addWorkspace(UUID room)
+            + void : addTraitAdmin(Integer id, String trait)
+            + void : addTraits(Integer id, List<String> traits)
+            + void : addReservation(Integer id, Timespan timespan)
+            + void : addRecurringReservation(Integer id, Timespan timespan)
+            + void : deleteWorkspaceAdmin(Integer id)
+            + void : deleteTraitAdmin(Integer id, String trait)
+            + void : lockWorkspaceAdmin(Integer id, Timespan timespan)
+            + void : cancelReservationAdmin(Integer id, Timespan timespan)
         }
         class NotExistentException << extends RuntimeException >> {
             This handles failed id searches
@@ -102,26 +136,32 @@ package domain{
 '            - String : name
 '        }
         class Trait << Record >> {
-            - String : trait
+            + String : trait
         }
         class Timespan << Record >> {
-            - LocalDate : date
-            - LocalTime : startTime
-            - LocalTime : endTime
+            + LocalDate : date
+            + LocalTime : startTime
+            + LocalTime : endTime
+            + Integer : timespanId
         }
         class Workspace{
-            - Integer : id
-            - UUID : room
-            - List<Trait> : traits
-            - List<Timespan> : existingReservations
-            + boolean : isValid(Timespan timespan)
-            + boolean : isOverlap(Timespan timespan)
+            + Integer : id
+            + UUID : room
+            + List<Trait> : traits
+            + List<Timespan> : existingReservations
+            + boolean : isOverlap(Timespan newReservation)
+            + boolean : isValid(Timespan newReservation)
             + void : addTrait(Trait trait)
             + void : addReservation(Timespan timespan)
-            + void : roomDtoTransfer(RoomDto dto)
-            + void : traitDtoTransfer(TraitDto dto)
-            + void : timespanDtoTransfer(TimespanDto dto)
-            + void : workspaceDtoTransfer(WorkspaceDto dto)
+            + void : removeTrait(Trait traitToRemove)
+            + void : removeReservation(Timespan timespan)
+            + void : forceRemoveReservation(Timespan timespan)
+            + void : overwriteReservation(Timespan timespan)
+            - boolean : isOverlappingForOverwriting(Timespan existing, Timespan newTimespan)
+'            + void : roomDtoTransfer(RoomDto dto)
+'            + void : traitDtoTransfer(TraitDto dto)
+'            + void : timespanDtoTransfer(TimespanDto dto)
+'            + void : workspaceDtoTransfer(WorkspaceDto dto)
         }
 
     }
@@ -129,10 +169,13 @@ package domain{
 }
 
 'Adapter - api
-RoomMateApi --> BookingService
+AccessController --> BookingService
+AccessController --> Access
+
 
 'Adapter - web
 RoomMateController --> BookingService
+
 
 'Adapter - db
 WorkspaceRepositoryImpl ..> WorkspaceRepository
@@ -146,10 +189,12 @@ TraitDto --> WorkspaceRepositoryImpl
 TimespanDto --> WorkspaceRepositoryImpl
 WorkspaceDto --> WorkspaceRepositoryImpl
 
+
 'Domain - Application Service
 BookingService --> WorkspaceRepository
 BookingService --> NotExistentException
 BookingService --> InvalidInput
+
 
 'Domain - Model
 'Workspace --> Room

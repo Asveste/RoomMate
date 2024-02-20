@@ -121,7 +121,7 @@ public class ServiceTests {
 
         when(repo.findById(workspaceId)).thenReturn(Optional.of(mockWorkspace));
 
-        service.deleteWorkspace(workspaceId);
+        service.deleteWorkspaceAdmin(workspaceId);
 
         verify(repo).findById(workspaceId);
         verify(repo).deleteById(workspaceId);

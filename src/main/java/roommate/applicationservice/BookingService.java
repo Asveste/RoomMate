@@ -117,7 +117,7 @@ public class BookingService {
         repo.save(workspace);
     }
 
-    public void deleteWorkspace(Integer id) {
+    public void deleteWorkspaceAdmin(Integer id) {
         if (id == null) {
             throw new InvalidInput();
         }
