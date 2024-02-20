@@ -27,6 +27,9 @@ public class AppUserService implements OAuth2UserService {
         if ("cinders-ad".equals(originalUser.getAttribute("login"))) {
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }
+        if ("Elijah3791".equals(originalUser.getAttribute("login"))) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }
         return new DefaultOAuth2User(authorities, originalUser.getAttributes(), "id");
     }
 }
