@@ -42,7 +42,9 @@ public class RoomMateController {
                                    @RequestParam(required = false) String action, HttpServletRequest request) {
         List<Workspace> everyWorkspace = service.allWorkspaces();
         List<Workspace> filteredWorkspaces;
-        List<Trait> allTraits = service.allTraitsFromWorkspaces(everyWorkspace); // Immer von allen Workspaces ableiten
+        List<Trait> allTraits = service.allTraitsFromWorkspaces(everyWorkspace);
+
+        allTraits = allTraits.stream().distinct().toList();
 
         if ("filter".equals(action)) {
             if (bindingResult.hasErrors()) {
@@ -70,7 +72,7 @@ public class RoomMateController {
                 filteredWorkspaces = everyWorkspace;
             }
         } else {
-            filteredWorkspaces = everyWorkspace; // Standardmäßig alle Workspaces anzeigen, wenn nicht gefiltert wird
+            filteredWorkspaces = everyWorkspace;
         }
 
         model.addAttribute("workspaces", filteredWorkspaces);
