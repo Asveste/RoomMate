@@ -16,7 +16,7 @@
             Für das buchen von Arbeitsplätzen musst du zur Seite <a href="/workspace_booking">Arbeitsplatz
             buchen</a>.<br>
         </p>
-        <div class="text-body-secondary">Warum es diese Seite dann gibt? Wissen wir selber nichtmal.</div>
+        <div class="text-body-secondary">Diese Seite existiert, damit es eine allgemeine Arbeitsplatzübersicht ohne Filter gibt.</div>
     </div>
     <div>
         <ul class="list-group py-4">
@@ -24,6 +24,12 @@
                 th:each="workspace : ${workspaces}">
                 <p class="mb-0">
                     <span th:text="*{workspace.room()}">Raum-ID</span>
+                </p>
+                <p>
+                    Ausstattung:
+                    <span th:each="trait, iterStat : ${workspace.traits}">
+                    <span th:text="${trait.trait}"></span><th:block th:if="${!iterStat.last}">, </th:block>
+                </span>
                 </p>
             </li>
         </ul>
