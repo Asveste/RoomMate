@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1" name="viewport">
-    <link rel="stylesheet" th:href="@{css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link href="../static/css/bootstrap.min.css" rel="stylesheet">
     <title>RoomMate - Arbeitsplatzdetails</title>
 </head>
@@ -11,12 +11,12 @@
 <div class="container">
     <h1 class="text-body-emphasis py-4">Arbeitsplatz <span th:text="*{workspaces.id()}"></span></h1>
     <ul>
-        <li class="list-group py-4" th:each="trait : ${workspaces.traits()}">
+        <li class="list-group-horizontal py-1" th:each="trait : ${workspaces.traits()}">
             <span th:text="${trait.trait()}">Eigenschaft</span>
         </li>
     </ul>
     <form method="post" th:action="@{/room_details/{id}(id=${workspaceId})}">
-        <div class="mb-3">
+        <div class="my-3">
             <label class="form-label" for="date">Datum</label>
             <input class="form-control" id="date" name="date" required type="date">
         </div>
@@ -34,7 +34,8 @@
         </div>
         <button class="btn btn-primary my-3" type="submit">Reservieren</button>
     </form>
-    <a class="text-body-secondary py-8" href="index">Zurück zur Startseite</a>
+    <p>Falls deine Reservierung erfolgreich war, wird dir dies bestätigt. Wenn sie fehlschlägt passiert nichts.</p>
+    <a class="text-body-secondary py-8" href="/workspace_booking">Zurück zur Übersicht</a>
 </div>
 </body>
 </html>

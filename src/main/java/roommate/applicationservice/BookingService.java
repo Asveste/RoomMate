@@ -33,6 +33,30 @@ public class BookingService {
                 .toList();
     }
 
+    public List<Workspace> allWorkspacesByTimespan(Collection<Timespan> timespans) {
+        return repo.findAll().stream()
+                .filter(workspace -> workspace.existingReservations().containsAll(timespans))
+                .toList();
+    }
+
+    public List<Trait> allTraitsFromWorkspace(Integer id) {
+        Workspace workspace = repo.findById(id)
+                .orElseThrow(NotExistentException::new);
+        return workspace.traits();
+    }
+
+    public List<Trait> allTraitsFromWorkspaces(List<Workspace> workspaces) {
+        return workspaces.stream()
+                .flatMap(workspace -> workspace.traits().stream())
+                .toList();
+    }
+
+    public List<Timespan> allReservationsFromWorkspace(Integer id) {
+        Workspace workspace = repo.findById(id)
+                .orElseThrow(NotExistentException::new);
+        return workspace.existingReservations();
+    }
+
     public Integer addWorkspace(UUID room) {
         Workspace workspace = new Workspace(room);
         Workspace savedWorkspace = repo.save(workspace);
@@ -101,7 +125,7 @@ public class BookingService {
         repo.deleteById(id);
     }
 
-    public void removeTrait(Integer id, String trait) {
+    public void deleteTrait(Integer id, String trait) {
         if (id == null || trait == null || trait.isBlank()) {
             throw new InvalidInput();
         }
@@ -111,7 +135,7 @@ public class BookingService {
         repo.save(workspace);
     }
 
-    public void removeReservation(Integer id, Timespan timespan) {
+    public void deleteReservation(Integer id, Timespan timespan) {
         if (id == null || timespan == null) {
             throw new InvalidInput();
         }

@@ -3,15 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1" name="viewport">
-    <link rel="stylesheet" th:href="@{css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link href="../static/css/bootstrap.min.css" rel="stylesheet">
     <title>RoomMate - Arbeitsplatz Editor</title>
 </head>
 <body data-bs-theme="dark">
 <div class="container pb-4">
     <h1 class="text-body-emphasis py-4">Arbeitsplatz Editor</h1>
-    <p class="my-2">Hey <span th:text="${name}">Otto</span>! Unterhalb lassen sich neue Arbeitsplätze erstellen, sowie
-        bearbeiten und löschen.</p>
+    <p class="my-2">Hey <span th:text="${name}">Otto</span>! Unterhalb lassen sich Arbeitsplätze bearbeiten.</p>
+
+    <ul class="list-group py-4" th:remove="all-but-first">
+        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+            th:each="workspace : ${workspaces}">
+            <a href="#" th:href="@{/workspace_editor/{id}(id=${workspace.id})}">
+                <!--                <span th:text="*{room.number}">Raumnummer</span>-->
+                <span th:text="*{workspace.id}">Arbeitsplatznummer</span>
+            </a>
+            <p class="mb-0">
+            <p>
+                Traits:
+                <span th:each="trait, iterStat : ${workspace.traits}">
+                    <span th:text="${trait.trait}"></span><th:block th:if="${!iterStat.last}">, </th:block>
+                </span>
+            </p>
+            </p>
+        </li>
+    </ul>
+
     <a class="text-body-secondary py-8" href="/index">Zurück zur Startseite</a>
 </div>
 </body>
