@@ -19,7 +19,6 @@ import roommate.domain.model.Workspace;
 import roommate.domain.validation.onPost;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +41,7 @@ public class RoomMateController {
     public String workspaceBooking(Model model, Timespan timespan, BindingResult bindingResult,
                                    @RequestParam(required = false) String action, HttpServletRequest request) {
         List<Workspace> everyWorkspace = service.allWorkspaces();
-        List<Workspace> filteredWorkspaces = new ArrayList<>();
+        List<Workspace> filteredWorkspaces;
         List<Trait> allTraits = service.allTraitsFromWorkspaces(everyWorkspace); // Immer von allen Workspaces ableiten
 
         if ("filter".equals(action)) {
