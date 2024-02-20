@@ -30,13 +30,13 @@ public class RoomMateApplication {
 //            Trait trait5 = new Trait("Poster von David Hasselhoff");
 //            Trait trait6 = new Trait("Fax-Gerät");
 //
-//            workspace1.addTraitAdmin(trait1);
-//            workspace1.addTraitAdmin(trait3);
-//            workspace2.addTraitAdmin(trait4);
-//            workspace2.addTraitAdmin(trait1);
-//            workspace3.addTraitAdmin(trait2);
-//            workspace3.addTraitAdmin(trait5);
-//            workspace3.addTraitAdmin(trait6);
+//            workspace1.addTrait(trait1);
+//            workspace1.addTrait(trait3);
+//            workspace2.addTrait(trait4);
+//            workspace2.addTrait(trait1);
+//            workspace3.addTrait(trait2);
+//            workspace3.addTrait(trait5);
+//            workspace3.addTrait(trait6);
 //
 //            repository.save(workspace1);
 //            repository.save(workspace2);
