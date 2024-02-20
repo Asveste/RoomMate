@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import roommate.applicationservice.BookingService;
 import roommate.applicationservice.InvalidInput;
 import roommate.domain.model.Timespan;
@@ -163,14 +164,77 @@ public class RoomMateController {
         return "workspace_editor";
     }
 
-    @GetMapping("/workspace_editor/{id}")
+    @GetMapping("/workspace_editor/modify/{id}")
     @Secured("ROLE_ADMIN")
     public String workspaceEditorEdit(Model model, @PathVariable("id") Integer roomId) {
         Workspace workspace = service.workspace(roomId);
 
-        model.addAttribute("workspaceId", roomId);
-        model.addAttribute("workspaces", workspace);
+        model.addAttribute("workspace", workspace);
+        model.addAttribute("traits", workspace.traits());
+        model.addAttribute("reservations", workspace.existingReservations());
 
-        return "workspace_editor";
+        return "workspace_modify";
+    }
+
+    @PostMapping("/workspace_editor/modify/{id}/addTrait")
+    @Secured("ROLE_ADMIN")
+    public String addTraitToWorkspace(@PathVariable("id") Integer id, @RequestParam("trait") String trait, RedirectAttributes redirectAttributes) {
+        try {
+            service.addTraitAdmin(id, trait);
+            redirectAttributes.addFlashAttribute("successMessage", "Trait erfolgreich hinzugefügt.");
+        } catch (InvalidInput e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Fehler beim Hinzufügen des Traits.");
+        }
+        return "redirect:/workspace_editor/modify/{id}";
+    }
+
+    @PostMapping("/workspace_editor/modify/{id}/removeTrait")
+    @Secured("ROLE_ADMIN")
+    public String removeTraitFromWorkspace(@PathVariable("id") Integer id, @RequestParam("trait") String trait, RedirectAttributes redirectAttributes) {
+        try {
+            service.deleteTraitAdmin(id, trait);
+            redirectAttributes.addFlashAttribute("successMessage", "Trait erfolgreich entfernt.");
+        } catch (InvalidInput e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Fehler beim Entfernen des Traits.");
+        }
+        return "redirect:/workspace_editor/modify/{id}";
+    }
+
+    @PostMapping("/workspace_editor/modify/{id}/lockWorkspace")
+    @Secured("ROLE_ADMIN")
+    public String lockWorkspace(@PathVariable("id") Integer id, @Validated(onPost.class) Timespan timespan, RedirectAttributes redirectAttributes) {
+        try {
+            System.out.println("debug lock try");
+            service.lockWorkspaceAdmin(id, timespan);
+            redirectAttributes.addFlashAttribute("successMessage", "Arbeitsplatz erfolgreich gesperrt.");
+        } catch (InvalidInput e) {
+            System.out.println("debug lock catch");
+            redirectAttributes.addFlashAttribute("errorMessage", "Fehler beim Sperren des Arbeitsplatzes.");
+        }
+        return "redirect:/workspace_editor/modify/{id}";
+    }
+
+    @PostMapping("/workspace_editor/modify/{id}/overwriteReservation")
+    @Secured("ROLE_ADMIN")
+    public String overwriteReservations(@PathVariable("id") Integer id, @Validated(onPost.class) Timespan timespan, RedirectAttributes redirectAttributes) {
+        try {
+            service.overwriteReservationsAdmin(id, timespan);
+            redirectAttributes.addFlashAttribute("successMessage", "Reservierung erfolgreich überschrieben.");
+        } catch (InvalidInput e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Fehler beim Überschreiben der Reservierung.");
+        }
+        return "redirect:/workspace_editor/modify/{id}";
+    }
+
+    @PostMapping("/workspace_editor/modify/{id}/cancelReservation")
+    @Secured("ROLE_ADMIN")
+    public String cancelReservation(@PathVariable("id") Integer id, Timespan timespan, RedirectAttributes redirectAttributes) {
+        try {
+            service.cancelReservationAdmin(id, timespan);
+            redirectAttributes.addFlashAttribute("successMessage", "Reservierung erfolgreich storniert.");
+        } catch (InvalidInput e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Fehler beim Stornieren der Reservierung.");
+        }
+        return "redirect:/workspace_editor/modify/{id}";
     }
 }

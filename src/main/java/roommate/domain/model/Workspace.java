@@ -1,6 +1,7 @@
 package roommate.domain.model;
 
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +14,8 @@ public class Workspace implements Comparable<Workspace> {
     private Integer id;
     private final UUID room;
 
-    public Workspace(Integer id, UUID room, List<Trait> traits, List<Timespan> existingReservations) {
+    public Workspace(Integer id, UUID room, List<Trait> traits,
+                     List<Timespan> existingReservations) {
         this.id = id;
         this.room = room;
         this.traits = traits;
@@ -79,6 +81,46 @@ public class Workspace implements Comparable<Workspace> {
         if (isValid(timespan) && !isOverlap(timespan)) {
             existingReservations.remove(timespan);
         }
+    }
+
+    public void forceRemoveReservation(Timespan timespan) {
+        existingReservations.remove(timespan);
+    }
+
+    public void overwriteReservation(Timespan newTimespan) {
+        List<Timespan> updatedReservations = new ArrayList<>();
+
+        for (Timespan existingTimespan : existingReservations) {
+            if (isOverlappingForOverwriting(existingTimespan, newTimespan)) {
+                if (existingTimespan.startTime().isBefore(newTimespan.startTime())) {
+                    LocalTime adjustedEndTime = newTimespan.startTime().minusMinutes(1);
+                    if (!adjustedEndTime.isBefore(existingTimespan.startTime())) {
+                        updatedReservations.add(new Timespan(existingTimespan.date(),
+                                existingTimespan.startTime(), adjustedEndTime,
+                                existingTimespan.timespanId()));
+                    }
+                } else if (existingTimespan.endTime().isAfter(newTimespan.endTime())) {
+                    LocalTime adjustedStartTime = newTimespan.endTime().plusMinutes(1);
+                    if (!adjustedStartTime.isAfter(existingTimespan.endTime())) {
+                        updatedReservations.add(new Timespan(existingTimespan.date(),
+                                adjustedStartTime, existingTimespan.endTime(),
+                                existingTimespan.timespanId()));
+                    }
+                }
+            } else {
+                updatedReservations.add(existingTimespan);
+            }
+        }
+
+        updatedReservations.add(newTimespan);
+
+        existingReservations = updatedReservations;
+    }
+
+    private boolean isOverlappingForOverwriting(Timespan existing, Timespan newTimespan) {
+        return existing.date().isEqual(newTimespan.date())
+                && !existing.endTime().isBefore(newTimespan.startTime())
+                && !existing.startTime().isAfter(newTimespan.endTime());
     }
 
     @Override

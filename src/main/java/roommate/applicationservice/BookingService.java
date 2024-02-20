@@ -63,7 +63,7 @@ public class BookingService {
         return savedWorkspace.id();
     }
 
-    public void addTrait(Integer id, String trait) {
+    public void addTraitAdmin(Integer id, String trait) {
         if (id == null || trait == null || trait.isBlank()) {
             throw new InvalidInput();
         }
@@ -79,7 +79,7 @@ public class BookingService {
         Workspace workspace = workspace(id);
         traits.forEach(trait -> {
             try {
-                addTrait(id, trait);
+                addTraitAdmin(id, trait);
             } catch (InvalidInput e) {
                 System.err.println("Ignored invalid trait: " + trait);
             }
@@ -105,7 +105,8 @@ public class BookingService {
         List<Timespan> recurring = new ArrayList<>();
         recurring.add(timespan);
         for (int i = 1; i < 8; i++) {
-            recurring.add(new Timespan(timespan.date().plusWeeks(i), timespan.startTime(), timespan.endTime(), timespan.timespanId()));
+            recurring.add(new Timespan(timespan.date().plusWeeks(i), timespan.startTime(),
+                    timespan.endTime(), timespan.timespanId()));
         }
         recurring.forEach(timespan1 -> {
             if (!workspace.isValid(timespan1) || workspace.isOverlap(timespan1)) {
@@ -125,7 +126,7 @@ public class BookingService {
         repo.deleteById(id);
     }
 
-    public void deleteTrait(Integer id, String trait) {
+    public void deleteTraitAdmin(Integer id, String trait) {
         if (id == null || trait == null || trait.isBlank()) {
             throw new InvalidInput();
         }
@@ -135,12 +136,27 @@ public class BookingService {
         repo.save(workspace);
     }
 
-    public void deleteReservation(Integer id, Timespan timespan) {
+    public void lockWorkspaceAdmin(Integer id, Timespan timespan) {
+        Workspace workspace = workspace(id);
+        workspace.overwriteReservation(timespan);
+        repo.save(workspace);
+    }
+
+    public void cancelReservationAdmin(Integer id, Timespan timespan) {
         if (id == null || timespan == null) {
             throw new InvalidInput();
         }
         Workspace workspace = workspace(id);
-        workspace.removeReservation(timespan);
+        workspace.forceRemoveReservation(timespan);
+        repo.save(workspace);
+    }
+
+    public void overwriteReservationsAdmin(Integer id, Timespan timespan) {
+        if (id == null || timespan == null) {
+            throw new InvalidInput();
+        }
+        Workspace workspace = workspace(id);
+        workspace.overwriteReservation(timespan);
         repo.save(workspace);
     }
 }

@@ -50,7 +50,7 @@ public class ServiceTests {
         Workspace workspace = new Workspace(id, UUID.randomUUID());
         when(repo.findById(any())).thenReturn(Optional.of(workspace));
         BookingService service = new BookingService(repo);
-        service.addTrait(id, "trait1");
+        service.addTraitAdmin(id, "trait1");
 
         ArgumentCaptor<Workspace> captor = ArgumentCaptor.forClass(Workspace.class);
         verify(repo).save(captor.capture());
