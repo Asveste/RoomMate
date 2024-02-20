@@ -1,6 +1,7 @@
 package roommate.domain.model;
 
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,6 +122,35 @@ public class Workspace implements Comparable<Workspace> {
         return existing.date().isEqual(newTimespan.date())
                 && !existing.endTime().isBefore(newTimespan.startTime())
                 && !existing.startTime().isAfter(newTimespan.endTime());
+    }
+
+    public boolean isDateAvailable(LocalDate date) {
+        // Filtert alle Zeitspannen, die am gegebenen Datum stattfinden
+        List<Timespan> timespansForDate = existingReservations.stream()
+                .filter(timespan -> timespan.date().isEqual(date))
+                .sorted((t1, t2) -> t1.startTime().compareTo(t2.startTime()))
+                .toList();
+
+        if (timespansForDate.isEmpty()) {
+            // Keine Zeitspannen an diesem Tag, also ist der ganze Tag verfügbar
+            return true;
+        }
+
+        // Überprüft, ob es eine Lücke zwischen den Zeitspannen gibt
+        LocalTime lastEndTime = LocalTime.MIN;
+        for (Timespan timespan : timespansForDate) {
+            if (timespan.startTime().isAfter(lastEndTime)) {
+                // Es gibt eine Lücke zwischen den Zeitspannen
+                return true;
+            }
+            // Aktualisiert die letzte Endzeit, wenn die aktuelle Endzeit später ist
+            if (timespan.endTime().isAfter(lastEndTime)) {
+                lastEndTime = timespan.endTime();
+            }
+        }
+
+        // Überprüft, ob es am Ende des Tages eine Lücke gibt
+        return !lastEndTime.equals(LocalTime.MAX);
     }
 
     @Override

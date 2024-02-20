@@ -42,7 +42,7 @@ public class RoomMateController {
     public String workspaceBooking(Model model, Timespan timespan, BindingResult bindingResult,
                                    @RequestParam(required = false) String action, HttpServletRequest request) {
         List<Workspace> everyWorkspace = service.allWorkspaces();
-        List<Workspace> filteredWorkspaces;
+        List<Workspace> filteredWorkspaces = null;
         List<Trait> allTraits = service.allTraitsFromWorkspaces(everyWorkspace);
 
         allTraits = allTraits.stream().distinct().toList();
@@ -65,18 +65,35 @@ public class RoomMateController {
                         .collect(Collectors.toList());
             }
 
-            if (timespan.date() != null && timespan.startTime() != null && timespan.endTime() != null) {
-                filteredWorkspaces = everyWorkspace.stream()
-                        .filter(workspace -> !workspace.isOverlap(timespan))
-                        .toList();
+//            if (timespan.date() != null && timespan.startTime() != null && timespan.endTime() != null) {
+//                System.out.println("timespan filtering");
+//                filteredWorkspaces = everyWorkspace.stream()
+//                        .filter(workspace -> !workspace.isOverlap(timespan))
+//                        .toList();
+//            }
+            if (timespan.date() != null) {
+                if (timespan.startTime() == null && timespan.endTime() == null) {
+                    System.out.println("Datum-Filterung");
+                    filteredWorkspaces = everyWorkspace.stream()
+                            .filter(workspace -> workspace.isDateAvailable(timespan.date()))
+                            .toList();
+                } else if (timespan.startTime() != null && timespan.endTime() != null) {
+                    System.out.println("timespan filtering");
+                    filteredWorkspaces = everyWorkspace.stream()
+                            .filter(workspace -> !workspace.isOverlap(timespan))
+                            .toList();
+                }
             } else {
+                System.out.println("debug");
                 filteredWorkspaces = everyWorkspace;
             }
         } else {
             filteredWorkspaces = everyWorkspace;
         }
 
-        model.addAttribute("workspaces", filteredWorkspaces);
+        if (filteredWorkspaces != null) {
+            model.addAttribute("workspaces", filteredWorkspaces);
+        }
         model.addAttribute("allTraits", allTraits);
 
         return "workspace_booking";
