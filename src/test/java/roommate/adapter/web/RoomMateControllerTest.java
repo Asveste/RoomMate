@@ -4,23 +4,28 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import roommate.adapter.security.MethodSecurityConfig;
 import roommate.adapter.security.SecurityConfig;
 import roommate.adapter.security.WithMockOAuth2User;
+import roommate.applicationservice.BookingService;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@WebMvcTest(RoomMateController.class)
 @Import({SecurityConfig.class, MethodSecurityConfig.class})
 public class RoomMateControllerTest {
 
     @Autowired
     MockMvc mvc;
+
+    @MockBean
+    BookingService service;
 
     @Test
     @DisplayName("Die Startseite ist unter /index erreichbar")
