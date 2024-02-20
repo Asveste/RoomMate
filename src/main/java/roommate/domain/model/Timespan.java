@@ -11,4 +11,8 @@ import java.time.LocalTime;
 @ValidTimespan
 public record Timespan(@FutureOrPresent LocalDate date, @NotNull(groups = onPost.class) LocalTime startTime,
                        @NotNull(groups = onPost.class) LocalTime endTime, Integer timespanId) {
+    @Override
+    public String toString() {
+        return String.format("%s: %s - %s", date, startTime, endTime);
+    }
 }
