@@ -1,10 +1,10 @@
-CREATE TABLE workspace
+CREATE TABLE IF NOT EXISTS workspace
 (
     id   SERIAL PRIMARY KEY,
     room UUID NOT NULL
 );
 
-CREATE TABLE trait
+CREATE TABLE IF NOT EXISTS trait
 (
     trait         VARCHAR(300) NOT NULL,
     workspace     INTEGER      NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE trait
     FOREIGN KEY (workspace) REFERENCES workspace (id)
 );
 
-CREATE TABLE timespan
+CREATE TABLE IF NOT EXISTS timespan
 (
     date          DATE    NOT NULL,
     start_time    TIME    NOT NULL,
