@@ -7,12 +7,14 @@ import roommate.domain.validation.onPost;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @ValidTimespan
 public record Timespan(@FutureOrPresent LocalDate date, @NotNull(groups = onPost.class) LocalTime startTime,
                        @NotNull(groups = onPost.class) LocalTime endTime, Integer timespanId) {
     @Override
     public String toString() {
-        return String.format("%s: %s - %s", date, startTime, endTime);
+        return String.format("%s: %s Uhr - %s Uhr", date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+                startTime, endTime);
     }
 }
