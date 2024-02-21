@@ -6,10 +6,9 @@ import roommate.domain.model.Timespan;
 import roommate.domain.model.Trait;
 import roommate.domain.model.Workspace;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class BookingService {
@@ -29,14 +28,77 @@ public class BookingService {
     }
 
     public List<Workspace> allWorkspacesByTraits(Collection<Trait> traits) {
+        if (traits == null || traits.isEmpty()) {
+            // Entscheide, wie du mit diesen Fällen umgehen möchtest:
+            // - Für `null`, könntest du eine leere Liste zurückgeben oder eine Exception werfen.
+            // - Für eine leere Liste könntest du alle Workspaces zurückgeben oder auch eine leere Liste.
+            return Collections.emptyList(); // oder `return repo.findAll();` für den Fall einer leeren Liste
+        }
         return repo.findAll().stream()
-                .filter(workspace -> workspace.traits().containsAll(traits))
+                .filter(workspace -> workspace.traits() != null && workspace.traits().containsAll(traits))
                 .toList();
     }
 
-    public List<Workspace> allWorkspacesByTimespan(Collection<Timespan> timespans) {
+//    public List<Workspace> allWorkspacesByTimespan(Collection<Timespan> timespans) {
+//        return repo.findAll().stream()
+//                .filter(workspace -> workspace.existingReservations().containsAll(timespans))
+//                .toList();
+//    }
+
+    public List<Workspace> filterWorkspacesByTraits(List<Workspace> workspaces, List<Trait> traits) {
+        if (traits == null || traits.isEmpty()) {
+            return workspaces; // Keine Filterung, wenn keine Traits angegeben sind
+        }
+        return workspaces.stream()
+                .filter(workspace -> workspace.traits().containsAll(traits))
+                .collect(Collectors.toList());
+    }
+
+    public List<Workspace> filterWorkspacesByTimespan(List<Workspace> workspaces, Timespan timespan) {
+        if (timespan == null || (timespan.date() == null && timespan.startTime() == null && timespan.endTime() == null)) {
+            return workspaces; // Keine Filterung, wenn kein gültiger Timespan angegeben ist
+        }
+        return workspaces.stream()
+                .filter(workspace -> !workspace.isOverlap(timespan))
+                .collect(Collectors.toList());
+    }
+
+    public List<Workspace> allWorkspacesWithoutOverlap(Timespan timespan) {
+        if (timespan == null) {
+            // Entscheide, wie mit null Timespan umgegangen werden soll: Alle Workspaces zurückgeben oder leere Liste
+            return Collections.emptyList(); // oder `return repo.findAll();` wenn Workspaces bei null Timespan zurückgegeben werden sollen
+        }
+
         return repo.findAll().stream()
-                .filter(workspace -> workspace.existingReservations().containsAll(timespans))
+                // Filtert Workspaces heraus, die keine Überschneidung mit dem gegebenen Timespan haben
+                .filter(workspace -> !workspace.isOverlap(timespan))
+                .toList();
+    }
+
+
+    public List<Workspace> allWorkspacesByTimespans(Collection<Timespan> timespans) {
+        if (timespans == null || timespans.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return repo.findAll().stream()
+                .filter(workspace -> {
+                    // Sicherstellen, dass existingReservations nicht null ist
+                    Collection<Timespan> existingReservations = workspace.existingReservations();
+                    if (existingReservations == null) {
+                        return false;
+                    }
+
+                    // Für jeden Timespan in timespans überprüfen, ob mindestens eine Übereinstimmung in existingReservations existiert
+                    return timespans.stream().allMatch(timespan ->
+                            existingReservations.stream().anyMatch(existingReservation ->
+                                    // Überprüfen auf Übereinstimmung unter Berücksichtigung möglicher null-Werte in date, startTime, endTime
+                                    (timespan.date() == null || timespan.date().equals(existingReservation.date())) &&
+                                            (timespan.startTime() == null || timespan.startTime().equals(existingReservation.startTime())) &&
+                                            (timespan.endTime() == null || timespan.endTime().equals(existingReservation.endTime()))
+                            )
+                    );
+                })
                 .toList();
     }
 
@@ -47,8 +109,15 @@ public class BookingService {
     }
 
     public List<Trait> allTraitsFromWorkspaces(List<Workspace> workspaces) {
+        if (workspaces == null) {
+            return Collections.emptyList();
+        }
         return workspaces.stream()
-                .flatMap(workspace -> workspace.traits().stream())
+                .filter(Objects::nonNull)
+                .flatMap(workspace -> workspace.traits() == null
+                        ? Stream.empty() : workspace.traits().stream())
+                .distinct()
+                .sorted(Comparator.comparing(Trait::trait))
                 .toList();
     }
 
@@ -56,6 +125,18 @@ public class BookingService {
         Workspace workspace = repo.findById(id)
                 .orElseThrow(NotExistentException::new);
         return workspace.existingReservations();
+    }
+
+    public List<Timespan> allReservationsFromWorkspaces(List<Workspace> workspaces) {
+        if (workspaces == null) {
+            return Collections.emptyList();
+        }
+        return workspaces.stream()
+                .filter(Objects::nonNull)
+                .flatMap(workspace -> workspace.existingReservations() != null
+                        ? workspace.existingReservations().stream() : Stream.empty())
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     public Integer addWorkspace(UUID room) {

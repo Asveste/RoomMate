@@ -21,8 +21,8 @@ import roommate.domain.validation.onPost;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -38,68 +38,94 @@ public class RoomMateController {
         return "index";
     }
 
-    @GetMapping("/workspace_booking")
+    @GetMapping("/workspace_overview")
     public String workspaceBooking(Model model, Timespan timespan, BindingResult bindingResult,
                                    @RequestParam(required = false) String action, HttpServletRequest request) {
-        List<Workspace> everyWorkspace = service.allWorkspaces();
-        List<Workspace> filteredWorkspaces = null;
-        List<Trait> allTraits = service.allTraitsFromWorkspaces(everyWorkspace);
+        if ("filter".equals(action) && !bindingResult.hasErrors()) {
+            List<Workspace> everyWorkspace = service.allWorkspaces();
+            List<Trait> allTraits = service.allTraitsFromWorkspaces(everyWorkspace);
 
-        allTraits = allTraits.stream().distinct().toList();
+            // Filtern nach Traits
+            List<Trait> traitFilters = Optional.ofNullable(request.getParameterValues("traitFilter"))
+                    .stream().flatMap(Arrays::stream).map(Trait::new).collect(Collectors.toList());
 
-        if ("filter".equals(action)) {
-            if (bindingResult.hasErrors()) {
-                model.addAttribute("workspaces", everyWorkspace);
-                model.addAttribute("allTraits", allTraits);
-                return "workspace_booking";
+            List<Workspace> filteredWorkspaces = service.filterWorkspacesByTraits(everyWorkspace, traitFilters);
+
+            // Filtern nach Timespan
+            if (timespan.date() != null || (timespan.startTime() != null && timespan.endTime() != null)) {
+                filteredWorkspaces = service.filterWorkspacesByTimespan(filteredWorkspaces, timespan);
             }
 
-            String[] traitFilters = request.getParameterValues("traitFilter");
-            List<String> traitFilterList = traitFilters != null ? Arrays.asList(traitFilters) : Collections.emptyList();
-
-            if (!traitFilterList.isEmpty()) {
-                everyWorkspace = everyWorkspace.stream()
-                        .filter(workspace -> workspace.traits().stream()
-                                .map(Trait::trait)
-                                .anyMatch(traitFilterList::contains))
-                        .collect(Collectors.toList());
-            }
-
-//            if (timespan.date() != null && timespan.startTime() != null && timespan.endTime() != null) {
-//                System.out.println("timespan filtering");
-//                filteredWorkspaces = everyWorkspace.stream()
-//                        .filter(workspace -> !workspace.isOverlap(timespan))
-//                        .toList();
-//            }
-            if (timespan.date() != null) {
-                if (timespan.startTime() == null && timespan.endTime() == null) {
-                    System.out.println("Datum-Filterung");
-                    filteredWorkspaces = everyWorkspace.stream()
-                            .filter(workspace -> workspace.isDateAvailable(timespan.date()))
-                            .toList();
-                } else if (timespan.startTime() != null && timespan.endTime() != null) {
-                    System.out.println("timespan filtering");
-                    filteredWorkspaces = everyWorkspace.stream()
-                            .filter(workspace -> !workspace.isOverlap(timespan))
-                            .toList();
-                }
-            } else {
-                System.out.println("debug");
-                filteredWorkspaces = everyWorkspace;
-            }
-        } else {
-            filteredWorkspaces = everyWorkspace;
-        }
-
-        if (filteredWorkspaces != null) {
             model.addAttribute("workspaces", filteredWorkspaces);
+            model.addAttribute("allTraits", allTraits);
+        } else {
+            model.addAttribute("workspaces", service.allWorkspaces());
+            model.addAttribute("allTraits", service.allTraitsFromWorkspaces(service.allWorkspaces()));
         }
-        model.addAttribute("allTraits", allTraits);
 
-        return "workspace_booking";
+        return "workspace_overview";
     }
 
-    @GetMapping("/room_details/{id}")
+//    @GetMapping("/workspace_overview")
+//    public String workspaceBooking2(Model model, Timespan timespan, BindingResult bindingResult,
+//                                   @RequestParam(required = false) String action, HttpServletRequest request) {
+//        List<Workspace> everyWorkspace = service.allWorkspaces();
+//
+//        List<Trait> allTraits = service.allTraitsFromWorkspaces(everyWorkspace);
+//        List<Timespan> existingReservations = service.allReservationsFromWorkspaces(everyWorkspace);
+//
+//        List<Workspace> filteredWorkspaces = service.allWorkspacesByTraits(allTraits);
+//
+//        // Only execute if user pressed filter button. (No this is not a comment code smell, we WANT this to be here)
+//        if ("filter".equals(action)) {
+//            if (bindingResult.hasErrors()) {
+//                model.addAttribute("workspaces", everyWorkspace);
+//                model.addAttribute("allTraits", allTraits);
+//                return "workspace_overview";
+//            }
+//
+//            List<Trait> traitFilters = Arrays.stream(request.getParameterValues("traitFilter"))
+//                    .map(Trait::new)
+//                    .collect(Collectors.toList());
+//
+//            if (!traitFilters.isEmpty()) {
+//                filteredWorkspaces = service.allWorkspacesByTraits(traitFilters);
+//                everyWorkspace = everyWorkspace.stream()
+//                        .filter(workspace -> workspace.traits().stream()
+//                                .map(Trait::trait)
+//                                .anyMatch(traitFilters::contains))
+//                        .collect(Collectors.toList());
+//            }
+//
+//            if (timespan.date() != null) {
+//                if (timespan.startTime() == null && timespan.endTime() == null) {
+//                    System.out.println("Datum-Filterung");
+//                    filteredWorkspaces = everyWorkspace.stream()
+//                            .filter(workspace -> workspace.isDateAvailable(timespan.date()))
+//                            .toList();
+//                } else if (timespan.startTime() != null && timespan.endTime() != null) {
+//                    System.out.println("timespan filtering");
+//                    filteredWorkspaces = everyWorkspace.stream()
+//                            .filter(workspace -> !workspace.isOverlap(timespan))
+//                            .toList();
+//                }
+//            } else {
+//                filteredWorkspaces = everyWorkspace;
+//            }
+//        } else {
+//            filteredWorkspaces = everyWorkspace;
+//        }
+//
+//        if (filteredWorkspaces != null) {
+//            model.addAttribute("workspaces", filteredWorkspaces);
+//        }
+//        model.addAttribute("workspaces", everyWorkspace);
+//        model.addAttribute("allTraits", allTraits);
+//
+//        return "workspace_overview";
+//    }
+
+    @GetMapping("/workspace_details/{id}")
     public String roomDetails(Model model, @PathVariable("id") Integer roomId) {
 
         Workspace workspace = service.workspace(roomId);
@@ -107,27 +133,28 @@ public class RoomMateController {
         model.addAttribute("workspaceId", roomId);
         model.addAttribute("workspaces", workspace);
 
-        return "room_details";
+        return "workspace_details";
     }
 
-    @PostMapping("/room_details/{id}")
-    public String roomDetailsMakeReservation(Model model, @PathVariable("id") Integer roomId, @Validated(onPost.class) Timespan timespan,
-                                             BindingResult bindingResult, boolean recurringReservation) {
+    @PostMapping("/workspace_details/{id}")
+    public String workspaceDetailsMakeReservation(Model model, @PathVariable("id") Integer roomId,
+                                                  @Validated(onPost.class) Timespan timespan,
+                                                  BindingResult bindingResult, boolean recurringReservation) {
         model.addAttribute("workspaceId", roomId);
 
         Workspace workspace = service.workspace(roomId);
 
         if (bindingResult.hasErrors()) {
-            return "redirect:/room_details/" + roomId;
+            return "redirect:/workspace_details/" + roomId;
         }
 
         if (timespan.date() != null && timespan.date().isBefore(LocalDate.now()) || workspace.isOverlap(timespan)) {
-            return "redirect:/room_details/" + roomId;
+            return "redirect:/workspace_details/" + roomId;
         }
 
 //        if (timespan.startTime().isAfter(timespan.endTime()) || timespan.date().isBefore(LocalDate.now())) {
 //            System.out.println("Invalid");
-//            return "redirect:/room_details/" + roomId;
+//            return "redirect:/workspace_details/" + roomId;
 //        }
 
         if (recurringReservation) {
@@ -135,7 +162,7 @@ public class RoomMateController {
                 service.addRecurringReservation(roomId, timespan);
                 return "redirect:/success";
             } catch (InvalidInput e) {
-                return "redirect:/room_details/" + roomId;
+                return "redirect:/workspace_details/" + roomId;
             }
         }
 
@@ -143,7 +170,7 @@ public class RoomMateController {
             service.addReservation(roomId, timespan);
             return "redirect:/success";
         } catch (InvalidInput e) {
-            return "redirect:/room_details/" + roomId;
+            return "redirect:/workspace_details/" + roomId;
         }
     }
 

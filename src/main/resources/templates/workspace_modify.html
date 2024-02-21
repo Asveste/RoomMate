@@ -5,17 +5,17 @@
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link href="../static/css/bootstrap.min.css" rel="stylesheet">
-    <title>RoomMate - Arbeitsplatz modifizieren</title>
+    <title>Arbeitsplatz modifizieren</title>
 </head>
 <body data-bs-theme="dark">
 <div class="container pb-4">
-    <h1 class="text-body-emphasis py-4">Arbeitsplatz <span th:text="*{workspace.id()}"></span></h1>
+    <h1 class="text-body-emphasis py-4 mt-3">Arbeitsplatz <span th:text="*{workspace.id()}"></span></h1>
     <p class="mt-2 mb-4">Hier kannst du Ausstattungen hinzufügen, entfernen, sowie Reservierungen überschreiben oder den
         Arbeitsplatz für einen Zeitraum blocken.</p>
 
-    <h2 class="mt-4">Traits</h2>
-    <p><span th:if="${workspace.traits().size() == 0}">Keine Traits vorhanden</span></p>
-    <ul>
+    <h2 class="mt-4 mb-3">Ausstattung</h2>
+    <p class="mb-3"><span th:if="${workspace.traits().size() == 0}">Keine Ausstattung vorhanden</span></p>
+    <ul class="mb-4">
         <li class="mb-3" th:each="trait : ${workspace.traits}">
             <span th:text="${trait.trait()}"></span>
             <form method="post" th:action="@{'/workspace_editor/modify/' + ${workspace.id()} + '/removeTrait'}">
@@ -24,14 +24,15 @@
             </form>
         </li>
     </ul>
-    <form method="post" th:action="@{'/workspace_editor/modify/' + ${workspace.id()} + '/addTrait'}">
-        <input class="form-control mt-3 mb-2" name="trait" placeholder="Neues Trait" type="text"/>
-        <button class="btn btn-primary btn-sm mb-4" type="submit">Hinzufügen</button>
+    <form class="mb-4" method="post" th:action="@{'/workspace_editor/modify/' + ${workspace.id()} + '/addTrait'}">
+        <input class="form-control mt-3 mb-2" name="trait" placeholder="Neues Trait" required type="text"/>
+        <button class="btn btn-primary btn-sm" type="submit">Hinzufügen</button>
     </form>
 
-    <h2 class="mt-4">Reservierungen</h2>
-    <p><span th:if="${workspace.existingReservations().size() == 0}">Keine Reservierungen vorhanden</span></p>
-    <ul>
+    <h2 class="mt-4 mb-3">Reservierungen</h2>
+    <p class="mb-3"><span th:if="${workspace.existingReservations().size() == 0}">Keine Reservierungen vorhanden</span>
+    </p>
+    <ul class="mb-4">
         <li class="mb-3" th:each="timespan : ${workspace.existingReservations()}">
             <span th:text="${timespan.date + ': ' + timespan.startTime + ' - ' + timespan.endTime}"></span>
             <form method="post" th:action="@{'/workspace_editor/modify/' + ${workspace.id()} + '/cancelReservation'}">
@@ -44,10 +45,11 @@
         </li>
     </ul>
 
-    <h2 class="mt-4">Reservierungen überschreiben</h2>
-    <p>Bitte beachten: Bereits existierende Reservierungen die im selben Zeitraum liegen werden gekürzt. Das
-        überschreiben kann nicht rückgängig gemacht werden.</p>
-    <form method="post" th:action="@{'/workspace_editor/modify/' + ${workspace.id()} + '/overwriteReservation'}">
+    <h2 class="mt-4 mb-3">Reservierungen überschreiben</h2>
+    <p class="mb-3">Bitte beachten: Bereits existierende Reservierungen die im selben Zeitraum liegen werden gekürzt.
+        Das überschreiben kann nicht rückgängig gemacht werden.</p>
+    <form class="mb-4" method="post"
+          th:action="@{'/workspace_editor/modify/' + ${workspace.id()} + '/overwriteReservation'}">
         <div class="my-3">
             <label class="form-label" for="date">Datum</label>
             <input class="form-control" id="date" name="date" required type="date">
@@ -63,10 +65,10 @@
         <button class="btn btn-danger btn-sm" type="submit">Überschreiben</button>
     </form>
 
-    <h2 class="mt-4">Arbeitsplatz sperren</h2>
-    <p>Bitte beachten: Bereits existierende Reservierungen für den zu sperrenden Zeitraum werden überschrieben. Dies
-        kann nicht rückgängig gemacht werden.</p>
-    <form method="post" th:action="@{'/workspace_editor/modify/' + ${workspace.id()} + '/lockWorkspace'}">
+    <h2 class="mt-4 mb-3">Arbeitsplatz sperren</h2>
+    <p class="mb-3">Bitte beachten: Bereits existierende Reservierungen für den zu sperrenden Zeitraum werden
+        überschrieben (also gekürzt oder ganz gelöscht). Dies kann nicht rückgängig gemacht werden.</p>
+    <form class="mb-4" method="post" th:action="@{'/workspace_editor/modify/' + ${workspace.id()} + '/lockWorkspace'}">
         <div class="my-3">
             <label class="form-label" for="date2">Datum</label>
             <input class="form-control" id="date2" name="date" required type="date">
@@ -79,10 +81,10 @@
             <label class="form-label" for="endTime2">Endzeit</label>
             <input class="form-control" id="endTime2" name="endTime" required type="time">
         </div>
-        <button class="btn btn-danger btn-sm mb-4" type="submit">Sperren</button>
+        <button class="btn btn-danger btn-sm" type="submit">Sperren</button>
     </form>
 
-    <a class="text-body-secondary py-8" href="/workspace_editor">Zurück zur Übersicht</a>
+    <a class="text-body-secondary py-3 d-block mt-4" href="/workspace_editor">Zurück zur Übersicht</a>
 </div>
 </body>
 </html>

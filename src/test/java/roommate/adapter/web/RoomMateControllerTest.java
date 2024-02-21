@@ -36,10 +36,10 @@ public class RoomMateControllerTest {
     }
 
     @Test
-    @DisplayName("Die Arbeitsplatz buchen Seite ist unter /workspace_booking erreichbar")
+    @DisplayName("Die Arbeitsplatz Übersicht Seite ist unter /workspace_details erreichbar")
     @WithMockOAuth2User(login = "JoeSchmoe")
     void workspaceBooking() throws Exception {
-        mvc.perform(get("/index"))
+        mvc.perform(get("/workspace_details"))
                 .andExpect(status().isOk());
     }
 
