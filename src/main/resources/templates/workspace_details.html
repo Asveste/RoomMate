@@ -9,18 +9,18 @@
 </head>
 <body data-bs-theme="dark">
 <div class="container">
-    <h1 class="text-body-emphasis py-4">Arbeitsplatz <span th:text="*{workspaces.id()}"></span></h1>
+    <h1 class="text-body-emphasis py-4">Arbeitsplatz <span th:text="*{workspaceId}"></span></h1>
     <h2>Ausstattung</h2>
-    <p><span th:if="${workspaces.traits().size() == 0}">Keine Ausstattung vorhanden</span></p>
+    <p><span th:if="${traits.size() == 0}">Keine Ausstattung vorhanden</span></p>
     <ul class="mb-4">
-        <li class="list-group-horizontal py-1" th:each="trait : ${workspaces.traits()}">
-            <span th:text="${trait.trait()}">Eigenschaft</span>
+        <li class="list-group-horizontal py-1" th:each="trait : ${traits}">
+            <span th:text="${trait.toString()}">Eigenschaft</span>
         </li>
     </ul>
     <h2>Bereits getätigte Reservierungen</h2>
-    <p><span th:if="${workspaces.existingReservations().size() == 0}">Keine Reservierungen vorhanden</span></p>
+    <p><span th:if="${workspace.existingReservations().size() == 0}">Keine Reservierungen vorhanden</span></p>
     <ul class="mb-4">
-        <li class="list-group-horizontal py-1" th:each="timespan : ${workspaces.existingReservations()}">
+        <li class="list-group-horizontal py-1" th:each="timespan : ${existingReservations}">
             <span th:text="${timespan.toString()}">Eigenschaft</span>
         </li>
     </ul>

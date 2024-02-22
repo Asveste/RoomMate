@@ -68,11 +68,13 @@ public class RoomMateController {
     }
 
     @GetMapping("/workspace_details/{id}")
-    public String workspaceDetails(Model model, @PathVariable("id") Integer roomId) {
-        Workspace workspace = service.workspace(roomId);
+    public String workspaceDetails(Model model, @PathVariable("id") Integer workspaceId) {
+        Workspace workspace = service.workspace(workspaceId);
 
-        model.addAttribute("workspaceId", roomId);
-        model.addAttribute("workspaces", workspace);
+        model.addAttribute("workspaceId", workspaceId);
+        model.addAttribute("traits", workspace.traits());
+        model.addAttribute("existingReservations", workspace.existingReservations());
+        model.addAttribute("workspace", workspace);
 
         return "workspace_details";
     }
