@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 public class AccessController {
@@ -47,10 +48,10 @@ public class AccessController {
         return result;
     }
 
-    private static record Key(String id, String owner) {
+    private static record Key(UUID id, String owner) {
     }
 
-    private static record Room(String id, String raum) {
+    private static record Room(UUID id, String raum) {
     }
 
 }

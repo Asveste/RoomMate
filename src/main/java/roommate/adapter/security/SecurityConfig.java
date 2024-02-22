@@ -11,7 +11,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain config(HttpSecurity chainBuilder) throws Exception {
         chainBuilder.authorizeHttpRequests(
-                configurer -> configurer.requestMatchers("/css/*").permitAll()
+                        configurer -> configurer.requestMatchers("/css/*", "/api/access").permitAll()
                         .anyRequest()
                         .authenticated())
                 .oauth2Login(config -> config.userInfoEndpoint(

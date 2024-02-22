@@ -1,4 +1,6 @@
 package roommate.adapter.api;
 
-public record Access(String key, String room) {
+import java.util.UUID;
+
+public record Access(UUID key, UUID room) {
 }
