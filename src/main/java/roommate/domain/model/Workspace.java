@@ -78,11 +78,11 @@ public class Workspace implements Comparable<Workspace> {
         traits.remove(traitToRemove);
     }
 
-    public void removeReservation(Timespan timespan) {
-        if (isValid(timespan) && !isOverlap(timespan)) {
-            existingReservations.remove(timespan);
-        }
-    }
+//    public void removeReservation(Timespan timespan) {
+//        if (isValid(timespan) && !isOverlap(timespan)) {
+//            existingReservations.remove(timespan);
+//        }
+//    }
 
     public void forceRemoveReservation(Timespan timespan) {
         existingReservations.remove(timespan);
@@ -124,34 +124,34 @@ public class Workspace implements Comparable<Workspace> {
                 && !existing.startTime().isAfter(newTimespan.endTime());
     }
 
-    public boolean isDateAvailable(LocalDate date) {
-        // Filtert alle Zeitspannen, die am gegebenen Datum stattfinden
-        List<Timespan> timespansForDate = existingReservations.stream()
-                .filter(timespan -> timespan.date().isEqual(date))
-                .sorted((t1, t2) -> t1.startTime().compareTo(t2.startTime()))
-                .toList();
-
-        if (timespansForDate.isEmpty()) {
-            // Keine Zeitspannen an diesem Tag, also ist der ganze Tag verfügbar
-            return true;
-        }
-
-        // Überprüft, ob es eine Lücke zwischen den Zeitspannen gibt
-        LocalTime lastEndTime = LocalTime.MIN;
-        for (Timespan timespan : timespansForDate) {
-            if (timespan.startTime().isAfter(lastEndTime)) {
-                // Es gibt eine Lücke zwischen den Zeitspannen
-                return true;
-            }
-            // Aktualisiert die letzte Endzeit, wenn die aktuelle Endzeit später ist
-            if (timespan.endTime().isAfter(lastEndTime)) {
-                lastEndTime = timespan.endTime();
-            }
-        }
-
-        // Überprüft, ob es am Ende des Tages eine Lücke gibt
-        return !lastEndTime.equals(LocalTime.MAX);
-    }
+//    public boolean isDateAvailable(LocalDate date) {
+//        // Filtert alle Zeitspannen, die am gegebenen Datum stattfinden
+//        List<Timespan> timespansForDate = existingReservations.stream()
+//                .filter(timespan -> timespan.date().isEqual(date))
+//                .sorted((t1, t2) -> t1.startTime().compareTo(t2.startTime()))
+//                .toList();
+//
+//        if (timespansForDate.isEmpty()) {
+//            // Keine Zeitspannen an diesem Tag, also ist der ganze Tag verfügbar
+//            return true;
+//        }
+//
+//        // Überprüft, ob es eine Lücke zwischen den Zeitspannen gibt
+//        LocalTime lastEndTime = LocalTime.MIN;
+//        for (Timespan timespan : timespansForDate) {
+//            if (timespan.startTime().isAfter(lastEndTime)) {
+//                // Es gibt eine Lücke zwischen den Zeitspannen
+//                return true;
+//            }
+//            // Aktualisiert die letzte Endzeit, wenn die aktuelle Endzeit später ist
+//            if (timespan.endTime().isAfter(lastEndTime)) {
+//                lastEndTime = timespan.endTime();
+//            }
+//        }
+//
+//        // Überprüft, ob es am Ende des Tages eine Lücke gibt
+//        return !lastEndTime.equals(LocalTime.MAX);
+//    }
 
     @Override
     public String toString() {
