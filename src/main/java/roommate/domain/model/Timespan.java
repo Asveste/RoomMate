@@ -15,7 +15,10 @@ public record Timespan(@FutureOrPresent @NotNull(groups = onPost.class) LocalDat
                        @NotNull(groups = onPost.class) LocalTime endTime, Integer timespanId) {
     @Override
     public String toString() {
-        return String.format("%s: %s Uhr - %s Uhr", date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-                startTime, endTime);
+        if (!(this.date == null)) {
+            return String.format("%s: %s Uhr - %s Uhr", date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+                    startTime, endTime);
+        }
+        return "";
     }
 }
