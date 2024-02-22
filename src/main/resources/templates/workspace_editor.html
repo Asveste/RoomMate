@@ -10,7 +10,10 @@
 <body data-bs-theme="dark">
 <div class="container pb-4">
     <h1 class="text-body-emphasis py-4">Arbeitsplatz Editor</h1>
-    <p class="my-2">Hey <span th:text="${name}">Otto</span>! Unterhalb lassen sich Arbeitsplätze bearbeiten.</p>
+    <p class="my-2">Hey <span th:text="${name}">Otto</span>! Unterhalb lassen sich Arbeitsplätze bearbeiten und neue
+        hinzufügen.</p>
+
+    <a class="my-2" href="workspace_add">Neue Arbeitsplätze hinzufügen</a>
 
     <ul class="list-group py-4" th:remove="all-but-first">
         <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"

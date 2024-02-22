@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -212,5 +213,19 @@ public class RoomMateController {
             redirectAttributes.addFlashAttribute("errorMessage", "Fehler beim Stornieren der Reservierung.");
         }
         return "redirect:/workspace_editor/modify/{id}";
+    }
+
+    @GetMapping("/workspace_add")
+    @Secured("ROLE_ADMIN")
+    public String addWorkspace(Model model) {
+        List<Workspace> workspaces = service.allWorkspaces();
+        model.addAttribute("workspaces", workspaces);
+        return "workspace_add";
+    }
+
+    @PostMapping("/workspace_add")
+    public String addWorkspace(@RequestParam UUID roomUUID) {
+        service.addWorkspaceAdmin(roomUUID);
+        return "redirect:/workspace_add";
     }
 }

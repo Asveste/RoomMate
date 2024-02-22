@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+    <title>Arbeitsplatz hinzufügen</title>
+</head>
+<body data-bs-theme="dark">
+<div class="container">
+    <h1 class="text-body-emphasis py-4">Verfügbare Arbeitsplätze</h1>
+    <div class="mt-2">
+        <p class="mb-1">
+            Hier lassen sich neue Arbeitsplätze für die jeweiligen Räume erstellen. Links stehen die Räume der
+            jeweiligen Arbeitsplätze.
+            Klicke einfach auf den Knopf "Neuer Arbeitsplatz".<br>
+            Die Ausstattung kannst du dann in dem Arbeitsplatz Editor hinzufügen.
+        </p>
+    </div>
+    <div>
+        <ul class="list-group py-4">
+            <li class="list-group-item list-group-item-action d-flex justify-content-between align-item"
+                th:each="workspace : ${workspaces}">
+                <p class="mb-0">
+                    <span th:text="*{workspace.room()}">Raum-ID</span>
+                </p>
+                <form method="post" th:action="@{/workspace_add}">
+                    <input name="roomUUID" th:value="${workspace.room}" type="hidden"/>
+                    <button class="btn btn-primary" type="submit">Neuer Arbeitsplatz</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+    <a class="text-body-secondary py-8" href="workspace_editor">Zurück zur Übersicht</a>
+</div>
+</body>
+</html>
