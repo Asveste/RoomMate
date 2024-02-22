@@ -34,7 +34,7 @@ public class ServiceTests {
 
         when(repo.save(any())).thenReturn(new Workspace(id, UUID.randomUUID()));
 
-        Integer returnedId = service.addWorkspace(room);
+        Integer returnedId = service.addWorkspaceAdmin(room);
 
         ArgumentCaptor<Workspace> captor = ArgumentCaptor.forClass(Workspace.class);
         verify(repo).save(captor.capture());

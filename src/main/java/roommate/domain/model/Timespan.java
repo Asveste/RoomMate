@@ -10,7 +10,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 @ValidTimespan
-public record Timespan(@FutureOrPresent LocalDate date, @NotNull(groups = onPost.class) LocalTime startTime,
+public record Timespan(@FutureOrPresent @NotNull(groups = onPost.class) LocalDate date,
+                       @NotNull(groups = onPost.class) LocalTime startTime,
                        @NotNull(groups = onPost.class) LocalTime endTime, Integer timespanId) {
     @Override
     public String toString() {
