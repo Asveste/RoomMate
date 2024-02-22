@@ -11,11 +11,19 @@ import roommate.adapter.security.MethodSecurityConfig;
 import roommate.adapter.security.SecurityConfig;
 import roommate.adapter.security.WithMockOAuth2User;
 import roommate.applicationservice.BookingService;
+import roommate.domain.model.Timespan;
+import roommate.domain.model.Trait;
+import roommate.domain.model.Workspace;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.UUID;
+
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RoomMateController.class)
 @Import({SecurityConfig.class, MethodSecurityConfig.class})
@@ -38,10 +46,7 @@ public class RoomMateControllerTest {
     @Test
     @DisplayName("Die Arbeitsplatz Übersicht Seite ist unter /workspace_overview erreichbar")
     @WithMockOAuth2User(login = "JoeSchmoe")
-    void workspaceBooking() throws Exception {
-//        Timespan timespan = new Timespan();
-//        timespan.setDate(LocalDate.now());
-
+    void workspaceOverview() throws Exception {
         mvc.perform(get("/workspace_overview"))
                 .andExpect(status().isOk());
     }
@@ -91,5 +96,28 @@ public class RoomMateControllerTest {
     void test() throws Exception {
         mvc.perform(get("/"))
                 .andExpect(redirectedUrl("http://localhost/oauth2/authorization/github"));
+    }
+
+    @Test
+    @WithMockOAuth2User(login = "JoeSchmoe")
+    @DisplayName("/workspace_details/{id} ist erreichbar")
+    void workspaceBooking2() throws Exception {
+        int workspaceId = 1;
+        Workspace workspace = new Workspace(workspaceId, UUID.randomUUID(),
+                List.of(new Trait("Katze")),
+                List.of(new Timespan(LocalDate.now(),
+                        LocalTime.of(10, 0),
+                        LocalTime.of(12, 0), 1)));
+
+        when(service.workspace(workspaceId)).thenReturn(workspace);
+
+        mvc.perform(get("/workspace_details/{id}", workspaceId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("workspace_details"))
+                .andExpect(model().attribute("workspaceId", workspaceId))
+                .andExpect(model().attribute("traits", workspace.traits()))
+                .andExpect(model().attribute("existingReservations", workspace.existingReservations()))
+                .andExpect(model().attribute("workspace", workspace));
+        verify(service).workspace(workspaceId);
     }
 }
