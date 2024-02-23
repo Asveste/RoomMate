@@ -226,6 +226,7 @@ public class RoomMateController {
     }
 
     @PostMapping("/workspace_add")
+    @Secured("ROLE_ADMIN")
     public String addWorkspace(@RequestParam UUID roomUUID) {
         service.addWorkspaceAdmin(roomUUID);
         return "redirect:/workspace_add";
