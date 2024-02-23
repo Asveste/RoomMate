@@ -8,8 +8,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 class WorkspaceTest {
     @Test
@@ -73,5 +73,22 @@ class WorkspaceTest {
         boolean valid = workspace.isOverlap(new Timespan(LocalDate.now().plusDays(1), LocalTime.of(14, 0), LocalTime.of(16, 0), 46));
 
         assertFalse(valid);
+    }
+
+    @Test
+    @DisplayName("Die Methode overwriteReservation kürzt überlappende Reservierungen")
+    void overwriteReservation() {
+        Workspace workspace = new Workspace(1, UUID.randomUUID());
+        workspace.addReservation(new Timespan(LocalDate.now(), LocalTime.of(14, 0), LocalTime.of(16, 0), 1));
+        workspace.addReservation(new Timespan(LocalDate.now(), LocalTime.of(17, 0), LocalTime.of(19, 0), 2));
+
+        workspace.overwriteReservation(new Timespan(LocalDate.now(), LocalTime.of(15, 0), LocalTime.of(18, 0), 3));
+        List<Timespan> reservations = workspace.existingReservations();
+        Timespan first = reservations.getFirst();
+        Timespan second = reservations.get(1);
+
+        assertEquals(LocalTime.of(14, 59), first.endTime());
+        assertEquals(LocalTime.of(18, 1), second.startTime());
+        assertThat(reservations).hasSize(3);
     }
 }

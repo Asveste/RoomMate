@@ -126,4 +126,23 @@ public class ServiceTests {
         verify(repo).findById(workspaceId);
         verify(repo).deleteById(workspaceId);
     }
+
+    @Test
+    @DisplayName("Reservierungen können storniert werden")
+    void testCancelReservation() {
+        Workspace workspace = new Workspace(id, UUID.randomUUID());
+        when(repo.findById(any())).thenReturn(Optional.of(workspace));
+        Timespan timespan1 = new Timespan(LocalDate.now(), LocalTime.of(14, 0), LocalTime.of(15, 0), 1);
+        workspace.addReservation(timespan1);
+
+        BookingService service = new BookingService(repo);
+
+        service.cancelReservationAdmin(id, timespan1);
+
+        ArgumentCaptor<Workspace> captor = ArgumentCaptor.forClass(Workspace.class);
+        verify(repo).save(captor.capture());
+        Workspace savedReservation = captor.getValue();
+
+        assertThat(savedReservation.existingReservations()).doesNotContain(timespan1);
+    }
 }
